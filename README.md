@@ -1,1 +1,1 @@
-# MMI706
+# MMI706 Reinforcement Learning
