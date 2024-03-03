@@ -1,3 +1,16 @@
 - Development of Low-Inertia Backdrivable Arm Focusing on Learning-Based Control
-
+- A Self-Reconfiguration Algorithm for Sliding Triangular Modular Robots
 - MARR : A Multi-Agent Reinforcement Resetter for Redirected Walking
+- Distributed Coach-Based Reinforcement Learning Controller for Snake Robot Locomotion
+- Learning to Grasp on the Moon from 3D Octree Observations with Deep Reinforcement Learning
+- Learning to Rock-and-Walk: Dynamic, Non-Prehensile, and Underactuated Object Locomotion Through Reinforcement Learning
+- Robust Reinforcement Learning via Genetic Curriculum
+- Deep Reinforcement Learning for Concentric Tube Robot Control with a Goal-Based Curriculum
+- Scalable Task-Driven Robotic Swarm Control via Collision Avoidance and Learning Mean-Field Control
+- Learning to Open Doors with an Aerial Manipulator
+- Reinforcement Learning Control of a Reconfigurable Planar Cable Driven Parallel Manipulator
+- Learning Modular Robot Visual-motor Locomotion Policies
+- A Multi-Target Trajectory Planning of a 6-DoF Free-Floating Space Robot via Reinforcement Learning
+- Reinforcement Learning for Safe Robot Control using Control Lyapunov Barrier Functions
+- Deep Residual Reinforcement Learning based Autonomous Blimp Control
+- evoBOT Design and Learning-Based Control of a Two-Wheeled Compound Inverted Pendulum Robot
