@@ -14,3 +14,5 @@
 - Reinforcement Learning for Safe Robot Control using Control Lyapunov Barrier Functions
 - Deep Residual Reinforcement Learning based Autonomous Blimp Control
 - evoBOT Design and Learning-Based Control of a Two-Wheeled Compound Inverted Pendulum Robot
+- An Adaptable Approach to Learn Realistic Legged Locomotion without Examples
+- Reinforcement Learning Based Multi-Layer Bayesian Control for Snake Robots in Cluttered Scenes
