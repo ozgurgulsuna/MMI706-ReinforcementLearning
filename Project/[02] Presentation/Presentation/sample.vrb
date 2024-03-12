@@ -1,0 +1,27 @@
+\frametitle{Colors}
+
+	You need to pick these colors
+	\begin{itemize}
+		\item \texttt{accentcolor} (alert text, blocks)
+		\item \texttt{titlefgcolor} (the box on the title page)
+		\item \texttt{titlebgcolor} (the background on the title page, in case you don't use an image)
+	\end{itemize}
+	Use these commands at the beginning of the document
+	\begin{verbatim}
+		\colorlet{titlefgcolor}{ETHGreen}
+		\colorlet{titlebgcolor}{ETHGreen}
+		\colorlet{accentcolor}{ETHRed}
+	\end{verbatim}
+
+	\medskip
+
+	\begin{tabular}{ll}
+	\textcolor{ETHBlue}{\rule{4mm}{3mm}} ETH Blue &
+	\textcolor{ETHGreen}{\rule{4mm}{3mm}} ETH Green \\
+	\textcolor{ETHPurple}{\rule{4mm}{3mm}} ETH Purple &
+	\textcolor{ETHGray}{\rule{4mm}{3mm}} ETH Gray \\
+	\textcolor{ETHRed}{\rule{4mm}{3mm}} ETH Red &
+	\textcolor{ETHPetrol}{\rule{4mm}{3mm}} ETH Petrol \\
+	\textcolor{ETHBronze}{\rule{4mm}{3mm}} ETH Bronze
+	\end{tabular}
+
