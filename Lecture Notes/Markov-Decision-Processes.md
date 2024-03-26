@@ -31,6 +31,73 @@ $$P = \begin{bmatrix}
     P_{n1} & P_{n2} & \cdots & P_{nn}
 \end{bmatrix}$$
 
+Each row of the probability matrix sums to 1, which means that the sum of the probabilites from a single state to all other possible states is 1.
+
+$$\sum_{s'= 1}^{n} P_{ss'} = 1$$
+
+A Markow process is a memoryless random process, where the next state depends only on the current state and not on the sequence of events that preceded it.
+
+> **Definition**: A Markov process (or Markov chain) is a tuple $(S, P)$, where S is a finite set of states, and P is a state transition probability matrix.
+
+**Example**: Consider a simple weather model with 4 states: sunny, cloudy, rainy, and foggy. The state transition probability matrix is given by:
+
+
+ $$P = \begin{array}{c|cccc}
+    & \text{sun} & \text{cloud} & \text{rain} & \text{fog} \\
+    \hline
+    \text{sun} & 0.8 & 0.1 & 0.1 & 0 \\
+    \text{cloud} & 0.2 & 0.6 & 0.1 & 0.1 \\
+    \text{rain} & 0.1 & 0.1 & 0.7 & 0.1 \\
+    \text{fog} & 0 & 0 & 0 & 1
+\end{array}$$
+
+### Markov Reward Process ###
+
+A Markov reward process is a Markov chain with values. It is a tuple $(S, P, R, \gamma)$, where:
+
+- S is a finite set of states,
+- P is a state transition probability matrix,
+- R is a reward function, $R_s = \mathbb{E}[R_{t+1} | S_t = s]$
+- $\gamma$ is a discount factor, $\gamma \in [0, 1]$.
+
+The reward function R(s, s') defines the immediate reward received after transitioning from state s to state s'. The discount factor $\gamma$ determines the present value of future rewards.
+
+> **Definition**: A Markov reward process is a tuple $(S, P, R, \gamma)$, where S is a finite set of states, P is a state transition probability matrix, R is a reward function, and $\gamma$ is a discount factor.
+> $$R_s = \mathbb{E}[R_{t+1} | S_t = s]$$
+
+> **Definition**: The return $G_t$ is the total discounted reward from time-step t.
+> $$G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}$$
+
+Discount factor is the present value of future rewards. It is a value between 0 and 1. The purpose of discounting is to make the sum of rewards finite.
+
+- gamma = 0: the agent is short-sighted "myopic" and only considers immediate rewards.
+- gamma = 1: the agent is far-sighted and considers future rewards with equal weight.
+
+Why do we use discount factor ?
+
+- to make reward finite / mathematically well-defined
+- to have a stable solution / to avoid infinite rewards in cyclic environments
+- to not rely on future rewards due to the uncertainty of the future
+- immidiate reward more valuable since it is not delayed
+- it is how animals behave in nature
+
+### Value Function ###
+The value function $v(s)$ gives the long-term value of state s under policy $\pi$. It is the expected return starting from state s, and then following policy $\pi$.
+
+> **Definition**: The state value function $v(s)$ of a Markov reward process is the expected return starting from state s, and then following policy $\pi$.
+> $$v(s) = \mathbb{E}[G_t | S_t = s]$$
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
