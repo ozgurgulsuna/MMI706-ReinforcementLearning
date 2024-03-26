@@ -87,6 +87,20 @@ The value function $v(s)$ gives the long-term value of state s under policy $\pi
 > **Definition**: The state value function $v(s)$ of a Markov reward process is the expected return starting from state s, and then following policy $\pi$.
 > $$v(s) = \mathbb{E}[G_t | S_t = s]$$
 
+The value function is the expected return starting from state s, and then following policy $\pi$. It is the expected return when starting from state s and following policy $\pi$ thereafter.
+
+### Bellman Equation ###
+The Bellman equation is a fundamental equation in dynamic programming. It decomposes the value function into two parts: immediate reward and discounted value of the next state.
+
+> **Definition**: The Bellman equation for the state value function $v(s)$ is given by:
+> $$v(s) = \mathbb{E}[R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... | S_t = s]$$
+> $$v(s) = \mathbb{E}[R_{t+1} + \gamma (R_{t+2} + \gamma R_{t+3} + ...) | S_t = s]$$
+> $$v(s) = \mathbb{E}[R_{t+1} + \gamma G_{t+1} | S_t = s]$$
+> $$v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1}) | S_t = s]$$
+
+
+
+
 
 
 
