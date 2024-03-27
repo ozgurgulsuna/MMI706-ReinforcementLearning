@@ -325,7 +325,7 @@ The Bellman optimality equation is a fundamental equation in dynamic programming
 > - Bellman Optimality Equation is non-linear
 > - No closed-form solution for the optimal value function
 > - Iterative methods are used to solve the Bellman Optimality Equation
-> - Value Iteration, Policy Iteration, Q-Learning, Sarsa, DQN, etc.
+>   - Value Iteration, Policy Iteration, Q-Learning, Sarsa, DQN, etc.
 
 
 
