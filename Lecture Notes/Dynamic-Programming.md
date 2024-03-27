@@ -137,8 +137,8 @@ $$\begin{array}{|c|c|c|c|}
 **Solution**: Iterative application of policy evaluation and policy improvement.
 
 Given policy π,
-- Evaluate the policy to find the value function Vπ(s) for all states s ∈ S
-- Improve the policy by acting greedily with respect to Vπ(s)
+- **Evaluate** the policy to find the value function Vπ(s) for all states s ∈ S
+- **Improve** the policy by acting greedily with respect to Vπ(s)
 
 
 
