@@ -16,6 +16,8 @@ $\mathbb{P}[S_{t+1} | S_t] = \mathbb{P}[S_{t+1} | S_1, S_2, ..., S_t]$
 
 The state captures all the relevant information from the history. Once the state is known, the history may be thrown away. The state is a sufficient statistic of the future.
 
+--------------------------------------------------------------------------------
+
 ### _State Transition Probability Matrix_ ###
 
 For a Markov state $S$, and a next state $S'$, the state transition probability matrix is defined as the probability of transitioning from state $S$ to state $S'$.
@@ -51,6 +53,8 @@ A Markow process is a memoryless random process, where the next state depends on
     \text{fog} & 0 & 0 & 0 & 1
 \end{array}$$
 
+--------------------------------------------------------------------------------
+
 ### Markov Reward Process ###
 
 A Markov reward process is a Markov chain with values. It is a tuple $(S, P, R, \gamma)$, where:
@@ -60,7 +64,7 @@ A Markov reward process is a Markov chain with values. It is a tuple $(S, P, R, 
 - R is a reward function, $R_s = \mathbb{E}[R_{t+1} | S_t = s]$
 - $\gamma$ is a discount factor, $\gamma \in [0, 1]$.
 
-The reward function R(s, s') defines the immediate reward received after transitioning from state s to state s'. The discount factor $\gamma$ determines the present value of future rewards.
+The reward function R(s, s') defines the _immediate reward received after transitioning from state s to state s'_. The discount factor $\gamma$ determines the present value of future rewards.
 
 > **Definition**: A Markov reward process is a tuple $(S, P, R, \gamma)$, where S is a finite set of states, P is a state transition probability matrix, R is a reward function, and $\gamma$ is a discount factor.
 > $$R_s = \mathbb{E}[R_{t+1} | S_t = s]$$
@@ -81,13 +85,18 @@ Why do we use discount factor ?
 - immidiate reward more valuable since it is not delayed
 - it is how animals behave in nature
 
-### Value Function ###
-The value function $v(s)$ gives the long-term value of state s under policy $\pi$. It is the expected return starting from state s, and then following policy $\pi$.
+--------------------------------------------------------------------------------
 
-> **Definition**: The state value function $v(s)$ of a Markov reward process is the expected return starting from state s, and then following policy $\pi$.
+### Value Function ###
+
+The value function $v(s)$ gives the long-term value of state s. It is the expected return starting from state s.
+
+> **Definition**: The state value function $v(s)$ of a Markov reward process is the expected return starting from state s.
 > $$v(s) = \mathbb{E}[G_t | S_t = s]$$
 
-The value function is the expected return starting from state s, and then following policy $\pi$. It is the expected return when starting from state s and following policy $\pi$ thereafter.
+The value function is the expected return starting from state s. It estimates how good it is for the agent to be in a particular state. The value function is a prediction of future rewards.
+
+--------------------------------------------------------------------------------
 
 ### Bellman Equation ###
 The Bellman equation is a fundamental equation in dynamic programming. It decomposes the value function into two parts: immediate reward and discounted value of the next state.
@@ -97,6 +106,104 @@ The Bellman equation is a fundamental equation in dynamic programming. It decomp
 > $$v(s) = \mathbb{E}[R_{t+1} + \gamma (R_{t+2} + \gamma R_{t+3} + ...) | S_t = s]$$
 > $$v(s) = \mathbb{E}[R_{t+1} + \gamma G_{t+1} | S_t = s]$$
 > $$v(s) = \mathbb{E}[R_{t+1} + \gamma v(S_{t+1}) | S_t = s]$$
+
+The Bellman equation expresses the relationship between the value of a state and the values of its successor states. It is a recursive equation that decomposes the value function into two parts: immediate reward and discounted value of the next state.
+
+*Matrix Form*:
+$$v = R + \gamma P v$$
+
+$$ \begin{bmatrix}
+    v(1) \\
+    v(2) \\
+    \vdots \\
+    v(n)
+\end{bmatrix} = \begin{bmatrix}
+    R_1 \\
+    R_2 \\
+    \vdots \\
+    R_n
+\end{bmatrix} + \gamma \begin{bmatrix}
+    P_{11} & P_{12} & \cdots & P_{1n} \\
+    P_{21} & P_{22} & \cdots & P_{2n} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    P_{n1} & P_{n2} & \cdots & P_{nn}
+\end{bmatrix} \begin{bmatrix}
+    v(1) \\
+    v(2) \\
+    \vdots \\
+    v(n)
+\end{bmatrix}$$
+
+The Bellman equation is a linear equation that can be solved for the value function v.
+
+$$v = (I - \gamma P)^{-1} R$$
+
+There are many methods to iteratively solve the Bellman equation, such as monte carlo, dynamic programming, and temporal difference learning.
+
+--------------------------------------------------------------------------------
+
+### Markov Decision Process ###
+
+Markov Decision Process (MDP) is a Markov reward process with decisions. It is a tuple $(S, A, P, R, \gamma)$, where:
+
+- S is a finite set of states,
+- **A is a finite set of actions**,
+- P is a state transition probability matrix, 
+- R is a reward function, $R_s = \mathbb{E}[R_{t+1} | S_t = s]$
+- $\gamma$ is a discount factor, $\gamma \in [0, 1]$.
+
+The agent interacts with the environment by taking actions. The agent selects an action, and the environment responds by presenting the agent with a reward and the next state. The environment's response at time t depends on the state and action at time t.
+
+> **Definition**: Policy $\pi$ is a distribution over actions given states,
+> $$\pi(a|s) = \mathbb{P}[A_t = a | S_t = s]$$
+
+The policy defines the agent's behavior. It is a distribution over actions given states. The policy can be deterministic or stochastic.
+
+MDP policies depend on the current state, not the history. The agent-environment interaction is a Markov process.
+
+Given a Markov Decision Process (MDP) $M=(S, A, P, R, \gamma)$, and a policy $\pi$,
+- The state sequence $S_1, S_2, S_3, ...$ is a Markov process $\langle S, P^{\pi}\rangle>$,
+- The state and reward sequence $S_1, R_2, S_2, R_3, S_3, ...$ is a Markov reward process $\langle S, P^{\pi}, R^{\pi}, \gamma \rangle$.
+
+$$P^{\pi}_{ss'} = \sum_{a \in A} \pi(a|s) P_{ss'}^a$$
+$$R^{\pi}_s = \sum_{a \in A} \pi(a|s) R_s^a$$
+
+--------------------------------------------------------------------------------
+
+### Value Function with Policy ###
+
+The value function $v_{\pi}(s)$ gives the long-term value of state s under policy $\pi$. It is the expected return starting from state s, following policy $\pi$.
+
+> **Definition**: The **state-value function** $v_{\pi}(s)$ of a Markov Decision Process (MDP) is the expected return starting from state s, following policy $\pi$.
+> $$v_{\pi}(s) = \mathbb{E}_{\pi}[G_t | S_t = s]$$
+
+> **Definition**: The **action-value function** $q_{\pi}(s, a)$ of a Markov Decision Process (MDP) is the expected return starting from state s, taking action a, and following policy $\pi$.
+> $$q_{\pi}(s, a) = \mathbb{E}_{\pi}[G_t | S_t = s, A_t = a]$$
+
+The value function is the expected return starting from state s, following policy $\pi$. It estimates how good it is for the agent to be in a particular state under policy $\pi$. The value function is a prediction of future rewards.
+
+--------------------------------------------------------------------------------
+
+### Bellman Equation with Policy ###
+
+The Bellman equation with policy is a fundamental equation in dynamic programming. It decomposes the value function into two parts: immediate reward and discounted value of the next state under policy $\pi$.
+ 
+ - State-Value Function:
+
+    - $v_{\pi}(s) = \mathbb{E}_{\pi}[R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s]$
+
+- Action-Value Function:
+
+    - $q_{\pi}(s, a) = \mathbb{E}_{\pi}[R_{t+1} + \gamma q_{\pi}(S_{t+1}, A_{t+1}) | S_t = s, A_t = a]$
+
+
+
+
+
+
+
+
+
 
 
 
