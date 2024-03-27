@@ -18,7 +18,7 @@ The state captures all the relevant information from the history. Once the state
 
 --------------------------------------------------------------------------------
 
-### _State Transition Probability Matrix_ ###
+### State Transition Probability Matrix ###
 
 For a Markov state $S$, and a next state $S'$, the state transition probability matrix is defined as the probability of transitioning from state $S$ to state $S'$.
 
@@ -269,6 +269,70 @@ graph TB
 2. $$q_{\pi}(s, a) = R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a v_{\pi}(s')$$
 3. $$v_{\pi}(s) = \sum_{a \in A} \pi(a|s) (R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a v_{\pi}(s'))$$
 4. $$q_{\pi}(s, a) = R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a \sum_{a' \in A} \pi(a'|s') q_{\pi}(s', a')$$
+
+--------------------------------------------------------------------------------
+
+### Optimal Value Function ###
+The optimal value function $v_*(s)$ gives the long-term value of state s under the optimal policy. It is the expected return starting from state s, following the optimal policy.
+
+> **Definition**: The **optimal state-value function** $v_*(s)$ of a Markov Decision Process (MDP) is the expected return starting from state s, following the optimal policy.
+> $$v_*(s) = \max_{\pi} v_{\pi}(s)$$
+
+> **Definition**: The **optimal action-value function** $q_*(s, a)$ of a Markov Decision Process (MDP) is the expected return starting from state s, taking action a, and following the optimal policy.
+> $$q_*(s, a) = \max_{\pi} q_{\pi}(s, a)$$
+
+The optimal value function is the expected return starting from state s, following the optimal policy. It estimates how good it is for the agent to be in a particular state under the optimal policy. The optimal value function is a prediction of future rewards.
+
+**Optimal Policy**: The optimal policy $\pi_*$ is the policy that achieves the highest value function.
+Define a partial order over policies as 
+$$\pi \geq \pi' \text{ if } v_{\pi}(s) \geq v_{\pi'}(s) \text{ for all } s \in S$$
+
+> **Theorem**: For any Markov Decision Process (MDP),
+> - There exists an optimal policy $\pi_*$ that is better than or equal to all other policies, $\pi_* \geq \pi$.
+> - All optimal policies achieve the optimal value function, $v_{\pi_*}(s) = v_*(s)$.
+> - All optimal policies achieve the optimal action-value function, $q_{\pi_*}(s, a) = q_*(s, a)$.
+
+To find the optimal policy, we need to find the optimal value function, and then derive the optimal policy from the optimal value function.
+
+$$ \pi_*(a|s) = \begin{cases} 1 & \text{if } a = \text{argmax}_{a \in A} q_*(s, a) \\ 0 & \text{otherwise} \end{cases}$$
+
+- There is always at least one deterministic optimal policy for any MDP.
+- There may be more than one deterministic optimal policy for an MDP.
+
+--------------------------------------------------------------------------------
+
+### Bellman Optimality Equation ###
+
+The Bellman optimality equation is a fundamental equation in dynamic programming. It decomposes the optimal value function into two parts: immediate reward and discounted value of the next state under the optimal policy.
+
+- State-Value Function:
+
+    - $v_*(s) = \max_{a \in A} q_*(s, a)$
+
+- Action-Value Function:
+    
+    - $q_*(s, a) = R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a v_*(s')$
+
+- State to State Transition:
+
+    - $v_*(s) = \max_{a \in A} (R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a v_*(s'))$
+
+- Action to Action Transition:
+
+    - $q_*(s, a) = R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a \max_{a' \in A} q_*(s', a')$
+
+
+> - Bellman Optimality Equation is non-linear
+> - No closed-form solution for the optimal value function
+> - Iterative methods are used to solve the Bellman Optimality Equation
+> - Value Iteration, Policy Iteration, Q-Learning, Sarsa, DQN, etc.
+
+
+
+
+     
+
+
 
 
 
