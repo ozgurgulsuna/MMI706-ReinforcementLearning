@@ -196,6 +196,87 @@ The Bellman equation with policy is a fundamental equation in dynamic programmin
 
     - $q_{\pi}(s, a) = \mathbb{E}_{\pi}[R_{t+1} + \gamma q_{\pi}(S_{t+1}, A_{t+1}) | S_t = s, A_t = a]$
 
+<style>
+svg[id^="mermaid-"] { min-width: 500px; max-width: 500px; }
+</style>
+
+
+```mermaid 
+%%{init: { "flowchart": { "htmlLabels": true, "curve": "linear" } } }%%
+graph TB
+    subgraph  4.[4.]
+    direction TB
+    style 4. color:#000, fill:#fff, stroke:#ddd;
+    style a6 fill:#222,stroke:#333,stroke-width:2px;
+    style a7 fill:#222,stroke:#333,stroke-width:2px;
+    style a8 fill:#222,stroke:#333,stroke-width:2px;
+    style a9 fill:#222,stroke:#333,stroke-width:2px;
+    style a10 fill:#222,stroke:#333,stroke-width:2px;
+    style s10  fill:#fff,stroke:#333,stroke-width:2px;
+    style s11 fill:#fff,stroke:#333,stroke-width:2px;
+    a6(( )) --- s10(( ))
+    a6 --- s11(( ))
+    s11 --- a7(( ))
+    s11 --- a8(( ))
+    s10 --- a9(( ))
+    s10 --- a10(( ))
+    end
+    subgraph  3.[3.]
+    direction TB
+    style 3. color:#000, fill:#fff, stroke:#ddd;
+    style a4 fill:#222,stroke:#333,stroke-width:2px;
+    style a5 fill:#222,stroke:#333,stroke-width:2px;
+    style s5  fill:#fff,stroke:#333,stroke-width:2px;
+    style s6 fill:#fff,stroke:#333,stroke-width:2px;
+    style s7 fill:#fff,stroke:#333,stroke-width:2px;
+    style s8 fill:#fff,stroke:#333,stroke-width:2px;
+    style s9 fill:#fff,stroke:#333,stroke-width:2px;
+    s5(( )) --- a4(( ))
+    s5 --- a5(( ))
+    a5 --- s6(( ))
+    a5 --- s7(( ))
+    a4 --- s8(( ))
+    a4 --- s9(( ))
+    end
+    subgraph  2.[2.]
+    direction TB
+    style 2. color:#000, fill:#fff, stroke:#ddd;
+    style a3 fill:#222,stroke:#333,stroke-width:2px;
+    style s3 fill:#fff,stroke:#333,stroke-width:2px;
+    style s4 fill:#fff,stroke:#333,stroke-width:2px;
+    style h2 fill:#fff,stroke:#fff;
+    a3(( )) --- s3(( ))
+    a3 --- s4(( ))
+    s4 --- h2(( ))
+    linkStyle 14 stroke:#fff,stroke-width:2px;
+    end
+    subgraph  1.[1.]
+    direction TB
+    style 1. color:#000, fill:#fff, stroke:#ddd;
+    style a2 fill:#222,stroke:#333,stroke-width:2px;
+    style a1 fill:#222,stroke:#333,stroke-width:2px;
+    style s1 fill:#fff,stroke:#333,stroke-width:2px;
+    style h1 fill:#fff,stroke:#fff;
+    s1((  )) --- a1(( ))
+    s1 --- a2(( ))
+    a2 --- h1(( ))
+    linkStyle 17 stroke:#fff,stroke-width:2px;
+    end
+``` 
+
+
+1. $$v_{\pi}(s) = \sum_{a \in A} \pi(a|s) q_{\pi}(s, a)$$
+2. $$q_{\pi}(s, a) = R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a v_{\pi}(s')$$
+3. $$v_{\pi}(s) = \sum_{a \in A} \pi(a|s) (R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a v_{\pi}(s'))$$
+4. $$q_{\pi}(s, a) = R_s^a + \gamma \sum_{s' \in S} P_{ss'}^a \sum_{a' \in A} \pi(a'|s') q_{\pi}(s', a')$$
+
+
+
+
+
+
+
+
 
 
 
