@@ -23,7 +23,7 @@
                 <site name="[1-S]" type="cylinder" pos="-1 0 0" euler="1.57075 1.57075 0" size="0.05 1" material="metal"/>
         	<body name="[1-1]" pos="0 0 0" >
           		<geom type="cylinder" pos="-1 0 0" euler="1.57075 1.57075 0"size="0.04 1" material="gray"/>
-          		<joint name="Linear1" type="slide" axis="1 0 0"/>
+          		<joint name="Linear1" type="slide" axis="1 0 0" range="-2 0"/>
           <!--Second Member-->
               <body name="[2-0]" pos="-2 0 0" >
                 <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
@@ -43,9 +43,12 @@
   </worldbody>	
 
     <equality>
-        <connect name="kinematic_link" active="true" body1="[1-0]" body2="[3-0]" anchor="0 0 0" /> -->
+        <connect name="kinematic_link" active="true" body1="[1-0]" body2="[3-0]" anchor="0 0 0" />-->
     </equality>
     
+    <actuator>
+	    <motor name='slide' joint='Linear1' gear='1000' ctrllimited='true' ctrlrange='-1 1' />
+    </actuator>
 
     
     
