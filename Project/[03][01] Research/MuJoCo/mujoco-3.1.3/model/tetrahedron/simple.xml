@@ -20,6 +20,10 @@
         <freejoint/>
         <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
         <geom type="cylinder" pos="-1 0 0" euler="1.57075 1.57075 0" size="0.05 1" material="metal"/>
+                <site name="[1-S]" type="cylinder" pos="-1 0 0" euler="1.57075 1.57075 0" size="0.05 1" material="metal"/>
+        	<body name="[1-1]" pos="0 0 0" >
+          		<geom type="cylinder" pos="-1 0 0" euler="1.57075 1.57075 0"size="0.04 1" material="gray"/>
+          		<joint name="Linear1" type="slide" axis="1 0 0"/>
           <!--Second Member-->
               <body name="[2-0]" pos="-2 0 0" >
                 <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
@@ -28,17 +32,22 @@
                   <!--Third Member-->
                       <body name="[3-0]" pos="1  1.73204  0" >
                         <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
-                        <geom type="cylinder" pos="0 1 0" euler="1.57075  -2.61795 0 " size="0.05 1" material="metal"/>
+                        <geom type="cylinder" pos="0.5 -0.86602 0" euler="1.57075  -2.61795 0 " size="0.05 1" material="metal"/>
                         <joint name="Passive3" type="ball" pos="0 0 0" axis="0 1 0" damping=".9"/>
                       </body>
               </body>
           </body>
+          </body>
+
+
   </worldbody>	
 
     <equality>
-
-        <!--<connect name="kinematic_link" active="true" body1="[1-0]" body2="[3-0]" anchor="0 0 0" /> -->
-
+        <connect name="kinematic_link" active="true" body1="[1-0]" body2="[3-0]" anchor="0 0 0" /> -->
     </equality>
+    
+
+    
+    
 
 </mujoco>
