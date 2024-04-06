@@ -10,23 +10,53 @@
   </asset>
 
   <worldbody>
-    <light name="light" pos="0 0 3" dir="0 0 -1" castshadow="true"/>
-    <geom type="plane" size="1 1 0.1" material="metal"/>
+    <light name="light" pos="0 0 10" dir="0 0 -1" castshadow="true"/>
+
     <!--First Member-->
-    <body name="[Member1]" pos="0 0 1" >
-      <body name="(1)" pos="0 0 0" >
-        <geom type="sphere" size="0.1" material="red"/>
-        <joint name="Node1" type="free"/>
-      </body>
+    <body name="[Member1]" pos="0 0 0" >
+      <freejoint/>
       <body name="[1-0]" pos="0 0 0" >
-        <geom type="cyli" size="0.1 0.1" material="gray"/>
-        <joint name="Base1" type="fixed"/>
+
+        <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
+        <!-- <geom type="cylinder" pos="0 1 0" euler="1.57075 0 0" size="0.05 1" material="gray"/> -->
+        <joint name="Passive1" type="ball" pos="0 0 0" axis="0 1 0"/>
+        <site name="[1-S]" type="cylinder" pos="0 1 0" euler="1.57075 0 0" size="0.05 1" material="metal"/>
+        <body name="[1-1]" pos="0 0 0" >
+          <geom type="cylinder" pos="0 2 0" euler="1.57075 0 0"size="0.04 1" material="gray"/>
+          <joint name="Linear1" type="slide" axis="0 1 0"/>
+          <!--Second Member-->
+            <body name="[Member2]" pos="0 3 0" >
+              <body name="[2-0]" pos="0 0 0" >
+                <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
+                <!-- <geom type="cylinder" pos="0 1 0" euler="1.57075 0 0" size="0.05 1" material="gray"/> -->
+                <joint name="Passive2" type="ball" pos="0 0 0" axis="0 1 0"/>
+                <site name="[2-S]" type="cylinder" pos="0 1 0" euler="1.57075 0 0" size="0.05 1" material="metal"/>
+                <body name="[2-1]" pos="0 0 0" >
+                  <geom type="cylinder" pos="0 2 0" euler="1.57075 0 0"size="0.04 1" material="gray"/>
+                  <joint name="Linear2" type="slide" axis="0 1 0"/>
+                  <!--Third Member-->
+                    <body name="[Member3]" pos="0 3 0" >
+                      <body name="[3-0]" pos="0 0 0" >
+                        <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
+                        <!-- <geom type="cylinder" pos="0 1 0" euler="1.57075 0 0" size="0.05 1" material="gray"/> -->
+                        <joint name="Passive3" type="ball" pos="0 0 0" axis="0 1 0"/>
+                        <site name="[3-S]" type="cylinder" pos="0 1 0" euler="1.57075 0 0" size="0.05 1" material="metal"/>
+                        <body name="[3-1]" pos="0 0 0" >
+                          <geom type="cylinder" pos="0 2 0" euler="1.57075 0 0"size="0.04 1" material="gray"/>
+                          <joint name="Linear3" type="slide" axis="0 1 0"/>
+                        </body>
+                      </body>
+                    </body>  
+                </body>
+            </body>
+          </body>
+        </body>
       </body>
-      <body name="[1-1]" pos="0 0 0" >
-        <geom type="cyli" size="0.1 0.1" material="gray"/>
-        <joint name="Linear1" type="slide" axis="1 0 0"/>
-      </body>
- </body>
-    <!--Second Member-->
+    </body>
+  </worldbody>	
+
+
+  
+
 </mujoco>
-+
+

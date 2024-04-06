@@ -55,3 +55,4 @@
     <position name="broken" cranksite="cranksite3" slidersite="slidersite3" cranklength=".05"/>
   </actuator>
 </mujoco>
+
