@@ -1,5 +1,6 @@
 <mujoco model="tetrahedron">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
+  <option gravity="0 0 -9.81" timestep="0.002" />
 
   <option cone="elliptic" impratio="10"/>
 
@@ -60,9 +61,9 @@
     </equality>
     
     <actuator>
-	<motor name='slide1' joint='Linear1' gear='1000' ctrllimited='true' ctrlrange='-10 10' />
-        <motor name='slide2' joint='Linear2' gear='1000' ctrllimited='true' ctrlrange='-10 10' />
-        <motor name='slide3' joint='Linear3' gear='1000' ctrllimited='true' ctrlrange='-10 1' />
+    	<position name="Member1" joint="Linear1"  kp="2000"  kv="400" ctrlrange="0 2"/>
+    	<position name="Member2" joint="Linear2"  kp="2000"  kv="400" ctrlrange="0 2"/>
+    	<position name="Member3" joint="Linear3"  kp="2000"  kv="400" ctrlrange="0 2"/>
     </actuator>
 
     
