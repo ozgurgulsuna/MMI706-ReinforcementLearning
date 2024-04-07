@@ -19,54 +19,54 @@
     <!--First Member-->
       <body name="[1-0]" pos="0.5 -0.2886751 0" >
         <freejoint/>
-        <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
-        <geom type="cylinder" pos="-1.05 0 0" euler="1.57075 1.57075 0" size="0.05 0.95" material="metal"/>
+        <geom type="sphere" pos="0 0 0" size="0.1" material="red"contype="1" mass="10"/>
+        <geom type="cylinder" pos="-1.05 0 0" euler="1.57075 1.57075 0" size="0.05 0.95" material="metal"contype="1"/>
               <!--Fourth Member-->
               <body name="[4-0]" pos="0 0 0" >
-                <geom type="cylinder" pos="-0.5250    0.3031    0.8573" axisangle=" -0.5 -0.8660254 0  0.615474" size="0.05 0.95" material="metal"/>
+                <geom type="cylinder" pos="-0.5250    0.3031    0.8573" axisangle=" -0.5 -0.8660254 0  0.615474" size="0.05 0.95" material="metal" contype="1"/>
                 <joint name="Passive4" type="ball" pos="0 0 0" axis="0 0 0" damping=".9"/>
                 <body name="[4-1]" pos="0 0 0" >
-                  <geom type="cylinder" pos="-0.4750    0.2742    0.7757" euler="-0.3398331 -0.5235941 -0.091879 " size="0.04 0.95" material="gray" />
+                  <geom type="cylinder" pos="-0.4750    0.2742    0.7757" euler="-0.3398331 -0.5235941 -0.091879 " size="0.04 0.95" material="gray" contype="1"/>
                   <joint name="Linear4" type="slide" axis="-0.4750    0.2742    0.7757" range="0 2"/>
                 </body>
               </body>
         <body name="[1-1]" pos="0 0 0" >
-        <geom type="cylinder" pos="-0.95 0 0" euler="1.57075 1.57075 0"size="0.04 0.95" material="gray"/>
+        <geom type="cylinder" pos="-0.95 0 0" euler="1.57075 1.57075 0"size="0.04 0.95" material="gray" contype="1"/>
         <joint name="Linear1" type="slide" axis="-1 0 0" range="0 2"/>
               <!--Second Member-->
               <body name="[2-0]" pos="-2 0 0" >
-                <geom type="sphere" pos="0 0 0" size="0.1" material="red" />
-                <geom type="cylinder" pos="0.5250 0.9093 0" euler="1.57075 -.523599 0"  size="0.05 0.95" material="metal"/>
+                <geom type="sphere" pos="0 0 0" size="0.1" material="red" contype="1" mass="10"/>
+                <geom type="cylinder" pos="0.5250 0.9093 0" euler="1.57075 -.523599 0"  size="0.05 0.95" material="metal" contype="1"/>
                 	<!--Fifty Member-->
                   <body name="[5-0]" pos="0 0 0" >
-                    <geom type="cylinder" pos="0.5250    0.3031    0.8573" axisangle=" -0.5 0.8660 0  0.615474" size="0.05 0.95" material="metal"/>
+                    <geom type="cylinder" pos="0.5250    0.3031    0.8573" axisangle=" -0.5 0.8660 0  0.615474" size="0.05 0.95" material="metal" contype="1"/>
                     <joint name="Passive5" type="ball" pos="0 0 0" axis="0 0 0" damping=".9"/>
                     <body name="[5-1]" pos="0 0 0" >
-                      <geom type="cylinder" pos="0.4750    0.2742    0.7757" euler="-0.33984 0.5235899 0.0918802" size="0.04 0.95" material="gray" />
+                      <geom type="cylinder" pos="0.4750    0.2742    0.7757" euler="-0.33984 0.5235899 0.0918802" size="0.04 0.95" material="gray"  contype="1"/>
                       <joint name="Linear5" type="slide" axis="0.5250    0.3031    0.8573" range="0 2"/>
                     </body>
                   </body>
                 <joint name="Passive2" type="ball" pos="0 0 0" axis="0 1 0" damping=".9"/>
                 <body name="[2-1]" pos="0 0 0" >
-                  <geom type="cylinder" pos="0.4750 0.8227 0" euler="1.57075 -.523599 0" size="0.04 0.95" material="gray" />
+                  <geom type="cylinder" pos="0.4750 0.8227 0" euler="1.57075 -.523599 0" size="0.04 0.95" material="gray" contype="1"/>
                   <joint name="Linear2" type="slide" axis="0.5  0.86602   0" range="0 2"/>
                   <!--Third Member-->
                     <body name="[3-0]" pos="1  1.73204  0" >
-                      <geom type="sphere" pos="0 0 0" size="0.1" material="red" />
-                      <geom type="cylinder" pos="0.5250 -0.9093 0" euler="1.57075  -2.61795 0 " size="0.05 0.95" material="metal"/> 
+                      <geom type="sphere" pos="0 0 0" size="0.1" material="red" contype="1" mass="10"/>
+                      <geom type="cylinder" pos="0.5250 -0.9093 0" euler="1.57075  -2.61795 0 " size="0.05 0.95" material="metal" contype="1"/> 
                         <!--Sixth Member-->
                         <body name="[6-0]" pos="0 0 0" >
-                          <geom type="cylinder" pos="0   -0.6063    0.8573" axisangle=" -0.5 0 0  -0.615474" size="0.05 0.95" material="metal"/>
+                          <geom type="cylinder" pos="0   -0.6063    0.8573" axisangle=" -0.5 0 0  -0.615474" size="0.05 0.95" material="metal"contype="1"/>
                           <joint name="Passive6" type="ball" pos="0 0 0" axis="0 0 0" damping=".9"/>
                           <body name="[6-1]" pos="0 0 0" >
-                            <geom type="cylinder" pos="0   -0.5485    0.7757" euler="0.615474 0 0" size="0.04 0.95" material="gray" />
-                            <geom type="sphere" pos="0   -1.1548    1.6330" size="0.1" material="red"/>
+                            <geom type="cylinder" pos="0   -0.5485    0.7757" euler="0.615474 0 0" size="0.04 0.95" material="gray" contype="1"/>
+                            <geom type="sphere" pos="0   -1.1548    1.6330" size="0.1" material="red"contype="1" mass="10"/>
                             <joint name="Linear6" type="slide" axis="0   -0.6063    0.8573" range="0 2"/>
                           </body>
                         </body>
                       <joint name="Passive3" type="ball" pos="0 0 0" axis="0 1 0" damping=".9"/>
                       <body name="[3-1]" pos="0 0 0" >
-                          <geom type="cylinder" pos="0.4750 -0.8227 0" euler="1.57075  -2.61795 0 " size="0.04 0.95" material="gray"/>
+                          <geom type="cylinder" pos="0.4750 -0.8227 0" euler="1.57075  -2.61795 0 " size="0.04 0.95" material="gray" contype="1"/>
                           <joint name="Linear3" type="slide" axis="0.5 -0.86602 0" range="0 2"/>
                       </body>
                     </body>
@@ -77,18 +77,19 @@
   </worldbody>	
 
     <equality>
-        <connect name="kinematic_link1" active="true" body1="[1-0]" body2="[3-1]" anchor="0 0 0" />
-	<connect name="kinematic_link2" active="true" body1="[5-1]" body2="[6-1]" anchor="0   -1.1548    1.6330" />
-	<connect name="kinematic_link3" active="true" body1="[4-1]" body2="[6-1]" anchor="0   -1.1548    1.6330" />-->
+        <connect name="kinematic_link1" active="true" body1="[1-0]" body2="[3-1]" anchor="0   0    0" />
+	<connect name="kinematic_link2" active="true" body1="[4-1]" body2="[5-1]" anchor="-1.0000    0.5774    1.6330" />
+	<connect name="kinematic_link3" active="true" body1="[4-1]" body2="[6-1]" anchor="-1.0000    0.5774    1.6330" />-->
+	<!--<connect name="kinematic_link4" active="true" body1="[4-1]" body2="[6-1]" anchor="0   0    1.6330" />-->
     </equality>
     
     <actuator>
-    	<position name="Member1" joint="Linear1"  kp="2000"  kv="400" ctrlrange="0 2"/>
-    	<position name="Member2" joint="Linear2"  kp="2000"  kv="400" ctrlrange="0 2"/>
-    	<position name="Member3" joint="Linear3"  kp="2000"  kv="400" ctrlrange="0 2"/>
-        <position name="Member4" joint="Linear4"  kp="2000"  kv="400" ctrlrange="0 2"/>
-        <position name="Member5" joint="Linear5"  kp="2000"  kv="400" ctrlrange="0 2"/>       
-        <position name="Member6" joint="Linear5"  kp="2000"  kv="400" ctrlrange="0 2"/>       
+    	<position name="Member1" joint="Linear1"  kp="18000"  kv="8000" ctrlrange="0 2"/>
+    	<position name="Member2" joint="Linear2"  kp="18000"  kv="8000" ctrlrange="0 2"/>
+    	<position name="Member3" joint="Linear3"  kp="18000"  kv="8000" ctrlrange="0 2"/>
+        <position name="Member4" joint="Linear4"  kp="18000"  kv="8000" ctrlrange="0 2"/>
+        <position name="Member5" joint="Linear5"  kp="18000"  kv="8000" ctrlrange="0 2"/>       
+        <position name="Member6" joint="Linear6"  kp="18000"  kv="8000" ctrlrange="0 2"/>       
     </actuator>
 
     
