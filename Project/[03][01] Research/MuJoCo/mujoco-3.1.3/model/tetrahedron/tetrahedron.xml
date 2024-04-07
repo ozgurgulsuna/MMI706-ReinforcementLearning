@@ -1,0 +1,97 @@
+<mujoco model="tetrahedron">
+  <compiler angle="radian" meshdir="assets" autolimits="true"/>
+  <option gravity="0 0 -9.81" timestep="0.002" />
+
+  <option cone="elliptic" impratio="10"/>
+
+  <asset>
+    <material name="metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+    <material name="red" rgba="0.9 0.1 0.1 1"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
+  </asset>
+
+  <worldbody>
+    <light name="light" pos="0 0 10" dir="0 0 -1" castshadow="true"/>
+    <geom type="plane" size="3 3 .01" material="grid"/>
+
+    <!--First Member-->
+      <body name="[1-0]" pos="0.5 -0.2886751 0" >
+        <freejoint/>
+        <geom type="sphere" pos="0 0 0" size="0.1" material="red"/>
+        <geom type="cylinder" pos="-1.05 0 0" euler="1.57075 1.57075 0" size="0.05 0.95" material="metal"/>
+              <!--Fourth Member-->
+              <body name="[4-0]" pos="0 0 0" >
+                <geom type="cylinder" pos="-0.5250    0.3031    0.8573" axisangle=" -0.5 -0.8660254 0  0.615474" size="0.05 0.95" material="metal"/>
+                <joint name="Passive4" type="ball" pos="0 0 0" axis="0 0 0" damping=".9"/>
+                <body name="[4-1]" pos="0 0 0" >
+                  <geom type="cylinder" pos="-0.4750    0.2742    0.7757" euler="-0.3398331 -0.5235941 -0.091879 " size="0.04 0.95" material="gray" />
+                  <joint name="Linear4" type="slide" axis="-0.4750    0.2742    0.7757" range="0 2"/>
+                </body>
+              </body>
+        <body name="[1-1]" pos="0 0 0" >
+        <geom type="cylinder" pos="-0.95 0 0" euler="1.57075 1.57075 0"size="0.04 0.95" material="gray"/>
+        <joint name="Linear1" type="slide" axis="-1 0 0" range="0 2"/>
+              <!--Second Member-->
+              <body name="[2-0]" pos="-2 0 0" >
+                <geom type="sphere" pos="0 0 0" size="0.1" material="red" />
+                <geom type="cylinder" pos="0.5250 0.9093 0" euler="1.57075 -.523599 0"  size="0.05 0.95" material="metal"/>
+                	<!--Fifty Member-->
+                  <body name="[5-0]" pos="0 0 0" >
+                    <geom type="cylinder" pos="0.5250    0.3031    0.8573" axisangle=" -0.5 0.8660 0  0.615474" size="0.05 0.95" material="metal"/>
+                    <joint name="Passive5" type="ball" pos="0 0 0" axis="0 0 0" damping=".9"/>
+                    <body name="[5-1]" pos="0 0 0" >
+                      <geom type="cylinder" pos="0.4750    0.2742    0.7757" euler="-0.33984 0.5235899 0.0918802" size="0.04 0.95" material="gray" />
+                      <joint name="Linear5" type="slide" axis="0.5250    0.3031    0.8573" range="0 2"/>
+                    </body>
+                  </body>
+                <joint name="Passive2" type="ball" pos="0 0 0" axis="0 1 0" damping=".9"/>
+                <body name="[2-1]" pos="0 0 0" >
+                  <geom type="cylinder" pos="0.4750 0.8227 0" euler="1.57075 -.523599 0" size="0.04 0.95" material="gray" />
+                  <joint name="Linear2" type="slide" axis="0.5  0.86602   0" range="0 2"/>
+                  <!--Third Member-->
+                    <body name="[3-0]" pos="1  1.73204  0" >
+                      <geom type="sphere" pos="0 0 0" size="0.1" material="red" />
+                      <geom type="cylinder" pos="0.5250 -0.9093 0" euler="1.57075  -2.61795 0 " size="0.05 0.95" material="metal"/> 
+                        <!--Sixth Member-->
+                        <body name="[6-0]" pos="0 0 0" >
+                          <geom type="cylinder" pos="0   -0.6063    0.8573" axisangle=" -0.5 0 0  -0.615474" size="0.05 0.95" material="metal"/>
+                          <joint name="Passive6" type="ball" pos="0 0 0" axis="0 0 0" damping=".9"/>
+                          <body name="[6-1]" pos="0 0 0" >
+                            <geom type="cylinder" pos="0   -0.5485    0.7757" euler="0.615474 0 0" size="0.04 0.95" material="gray" />
+                            <geom type="sphere" pos="0   -1.1548    1.6330" size="0.1" material="red"/>
+                            <joint name="Linear6" type="slide" axis="0   -0.6063    0.8573" range="0 2"/>
+                          </body>
+                        </body>
+                      <joint name="Passive3" type="ball" pos="0 0 0" axis="0 1 0" damping=".9"/>
+                      <body name="[3-1]" pos="0 0 0" >
+                          <geom type="cylinder" pos="0.4750 -0.8227 0" euler="1.57075  -2.61795 0 " size="0.04 0.95" material="gray"/>
+                          <joint name="Linear3" type="slide" axis="0.5 -0.86602 0" range="0 2"/>
+                      </body>
+                    </body>
+                </body>
+              </body>
+            </body>
+      </body>
+  </worldbody>	
+
+    <equality>
+        <connect name="kinematic_link1" active="true" body1="[1-0]" body2="[3-1]" anchor="0 0 0" />
+	<connect name="kinematic_link2" active="true" body1="[5-1]" body2="[6-1]" anchor="0   -1.1548    1.6330" />
+	<connect name="kinematic_link3" active="true" body1="[4-1]" body2="[6-1]" anchor="0   -1.1548    1.6330" />-->
+    </equality>
+    
+    <actuator>
+    	<position name="Member1" joint="Linear1"  kp="2000"  kv="400" ctrlrange="0 2"/>
+    	<position name="Member2" joint="Linear2"  kp="2000"  kv="400" ctrlrange="0 2"/>
+    	<position name="Member3" joint="Linear3"  kp="2000"  kv="400" ctrlrange="0 2"/>
+        <position name="Member4" joint="Linear4"  kp="2000"  kv="400" ctrlrange="0 2"/>
+        <position name="Member5" joint="Linear5"  kp="2000"  kv="400" ctrlrange="0 2"/>       
+        <position name="Member6" joint="Linear5"  kp="2000"  kv="400" ctrlrange="0 2"/>       
+    </actuator>
+
+    
+    
+
+</mujoco>
