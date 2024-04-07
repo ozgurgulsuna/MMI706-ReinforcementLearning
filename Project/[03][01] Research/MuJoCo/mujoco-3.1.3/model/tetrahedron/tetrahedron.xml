@@ -77,19 +77,19 @@
   </worldbody>	
 
     <equality>
-        <connect name="kinematic_link1" active="true" body1="[1-0]" body2="[3-1]" anchor="0   0    0" />
+        <connect name="kinematic_link1" active="true" body1="[1-0]" body2="[3-1]" anchor=" 0         0         0" />
 	<connect name="kinematic_link2" active="true" body1="[4-1]" body2="[5-1]" anchor="-1.0000    0.5774    1.6330" />
 	<connect name="kinematic_link3" active="true" body1="[4-1]" body2="[6-1]" anchor="-1.0000    0.5774    1.6330" />-->
-	<!--<connect name="kinematic_link4" active="true" body1="[4-1]" body2="[6-1]" anchor="0   0    1.6330" />-->
+	<connect name="kinematic_link4" active="true" body1="[5-1]" body2="[6-1]" anchor=" 1.0000    0.5774    1.6330" />-->
     </equality>
     
     <actuator>
-    	<position name="Member1" joint="Linear1"  kp="18000"  kv="8000" ctrlrange="0 2"/>
-    	<position name="Member2" joint="Linear2"  kp="18000"  kv="8000" ctrlrange="0 2"/>
-    	<position name="Member3" joint="Linear3"  kp="18000"  kv="8000" ctrlrange="0 2"/>
-        <position name="Member4" joint="Linear4"  kp="18000"  kv="8000" ctrlrange="0 2"/>
-        <position name="Member5" joint="Linear5"  kp="18000"  kv="8000" ctrlrange="0 2"/>       
-        <position name="Member6" joint="Linear6"  kp="18000"  kv="8000" ctrlrange="0 2"/>       
+    	<position name="Member1" joint="Linear1"  kp="18000"  kv="10000" ctrlrange="0 2"/>
+    	<position name="Member2" joint="Linear2"  kp="18000"  kv="10000" ctrlrange="0 2"/>
+    	<position name="Member3" joint="Linear3"  kp="18000"  kv="10000" ctrlrange="0 2"/>
+        <position name="Member4" joint="Linear4"  kp="18000"  kv="10000" ctrlrange="0 2"/>
+        <position name="Member5" joint="Linear5"  kp="18000"  kv="10000" ctrlrange="0 2"/>       
+        <position name="Member6" joint="Linear6"  kp="18000"  kv="10000" ctrlrange="0 2"/>       
     </actuator>
 
     
