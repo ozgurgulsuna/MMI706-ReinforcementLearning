@@ -13,8 +13,6 @@
   </asset>
 
   <worldbody>
-    <light name="light" pos="0 0 10" dir="0 0 -1" castshadow="true"/>
-    <geom type="plane" size="3 3 .01" material="grid"/>
 
     <!--First Member-->
       <body name="[1-0]" pos="0.5 -0.2886751 0" >
@@ -79,8 +77,8 @@
     <equality>
         <connect name="kinematic_link1" active="true" body1="[1-0]" body2="[3-1]" anchor=" 0         0         0" />
 	<connect name="kinematic_link2" active="true" body1="[4-1]" body2="[5-1]" anchor="-1.0000    0.5774    1.6330" />
-	<connect name="kinematic_link3" active="true" body1="[4-1]" body2="[6-1]" anchor="-1.0000    0.5774    1.6330" />-->
-	<connect name="kinematic_link4" active="true" body1="[5-1]" body2="[6-1]" anchor=" 1.0000    0.5774    1.6330" />-->
+	<connect name="kinematic_link3" active="true" body1="[4-1]" body2="[6-1]" anchor="-1.0000    0.5774    1.6330" />
+	<connect name="kinematic_link4" active="true" body1="[5-1]" body2="[6-1]" anchor=" 1.0000    0.5774    1.6330" />-
     </equality>
     
     <actuator>

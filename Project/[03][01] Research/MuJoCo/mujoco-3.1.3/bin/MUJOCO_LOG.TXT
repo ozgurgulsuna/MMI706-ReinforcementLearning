@@ -121,3 +121,18 @@ WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Ti
 Sun Apr  7 21:36:39 2024
 WARNING: Nan, Inf or huge value in QACC at DOF 1. The simulation is unstable. Time = 217.5980.
 
+Mon Apr 22 12:45:29 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 19.8680.
+
+Mon Apr 22 15:33:16 2024
+WARNING: File size over 2GB is not supported. File: '../model/robotiq_2f85/'
+
+Mon Apr 22 15:44:06 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 1. The simulation is unstable. Time = 19.0940.
+
+Mon Apr 22 15:49:55 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 16.6500.
+
+Mon Apr 22 16:37:15 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 111.8680.
+
