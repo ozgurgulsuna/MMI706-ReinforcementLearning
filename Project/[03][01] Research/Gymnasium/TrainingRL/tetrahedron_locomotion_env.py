@@ -118,15 +118,15 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         xml_file: str = os.path.abspath("assets/scene.xml"),
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        forward_reward_weight: float = 1.0,
-        ctrl_cost_weight: float = 0.05,
+        forward_reward_weight: float = 10,
+        ctrl_cost_weight: float = 0.0000,
         healthy_reward: float = 5.0,
         main_body: Union[int, str] = 1,
         size_cost_weight: float = 0.0001,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (0.1, 2.0), # only in planar surface
+        healthy_z_range: Tuple[float, float] = (0.0, 5.0), # only in planar surface
         reset_noise_scale: float = 0.1,
-        episode_horizon: int = 1000,
+        episode_horizon: int = 500,
         step_number: int = 0,
         **kwargs,
     ):
@@ -207,14 +207,20 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
     def is_healthy(self):
         # check if the robot is healthy
         state = self.state_vector()
+        CoM_pos = self.data.subtree_com[0].copy()
         min_z, max_z = self._healthy_z_range
-        is_healthy = np.isfinite(state).all() and min_z <= state[2] <= max_z
+        is_healthy = np.isfinite(state).all() and min_z <= CoM_pos[2] <= max_z
+        #print("state",state)
+        #print("is healthy",is_healthy)
         return is_healthy  
     
     def step(self, action):
         # step function of the environment
         position_before = self.data.subtree_com[0].copy()
         self.do_simulation(action, self.frame_skip)
+        self._step_number +=1
+        print("step",self._step_number)
+        
         position_after = self.data.subtree_com[0].copy()
 
         velocity = (position_after - position_before) / self.dt
@@ -224,7 +230,10 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         reward, reward_info = self._get_reward(x_velocity, action)
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
         truncated = self._step_number > self._episode_horizon
+        print("truncated",truncated)
+        print("terminated",terminated)
 
+        # info is incorrect
         info = {
             "x_position": self.data.subtree_com[0],
             "y_position": self.data.subtree_com[1],
@@ -244,7 +253,7 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
     def _get_reward(self, x_velocity:float, action):
         # reward function
         forward_reward = self._forward_reward_weight * x_velocity
-        healthy_reward = self.healthy_reward
+        healthy_reward = self._healthy_reward
         total_reward = forward_reward + healthy_reward
 
         ctrl_cost = self.control_cost(action)
@@ -277,25 +286,26 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
                                          np.array(self.data.geom("(3)").xpos[:3]),
                                          np.array(self.data.geom("(6)").xpos[:3])), axis=0)
 
-        #print("position",position)
-        #print("velocity",velocity)
-        #print("member_lengths",member_lengths)
-        #print("node_pos",node_positions)
+        print("position",position)
+        print("velocity",velocity)
+        print("member_lengths",member_lengths)
+        print("node_pos",node_positions)
         
         #return position
         return np.concatenate((position, velocity, member_lengths, node_positions), axis=0)
     
     def reset_model(self):
+        self._step_number = 0
 	# randomizing the initial configuration should be done in a different way for us
         #noise_low = -self._reset_noise_scale
         #noise_high = self._reset_noise_scale
         
-        qpos = self.init_qpos + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nq)
-        qvel = self.init_qvel + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nv)
+        #qpos = self.init_qpos + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nq)
+        #qvel = self.init_qvel + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nv)
         
 
-        #qpos = self.init_qpos 
-        #qvel = self.init_qvel
+        qpos = self.init_qpos 
+        qvel = self.init_qvel
         self.set_state(qpos, qvel)
 
         observation = self._get_obs()

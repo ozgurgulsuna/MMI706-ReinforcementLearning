@@ -136,3 +136,48 @@ WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Ti
 Mon Apr 22 16:37:15 2024
 WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 111.8680.
 
+Tue Apr 23 14:42:51 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 1272.3020.
+
+Tue Apr 23 18:04:40 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 1. The simulation is unstable. Time = 31.8180.
+
+Tue Apr 23 18:05:42 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 11.2080.
+
+Tue Apr 23 18:10:08 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 4. The simulation is unstable. Time = 187.6060.
+
+Tue Apr 23 18:21:21 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 14.9760.
+
+Tue Apr 23 19:12:26 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 26.2600.
+
+Tue Apr 23 19:33:31 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 73.1960.
+
+Tue Apr 23 21:07:21 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 256.3100.
+
+Tue Apr 23 21:12:03 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 244.5520.
+
+Tue Apr 23 21:16:02 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 5. The simulation is unstable. Time = 67.7440.
+
+Tue Apr 23 21:31:25 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 46.2840.
+
+Tue Apr 23 21:39:25 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 17. The simulation is unstable. Time = 7.2680.
+
+Tue Apr 23 21:53:04 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 172.8800.
+
+Tue Apr 23 21:58:56 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 49.3000.
+
+Tue Apr 23 23:29:22 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 873.0240.
+
