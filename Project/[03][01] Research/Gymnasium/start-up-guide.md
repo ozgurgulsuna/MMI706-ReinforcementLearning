@@ -18,11 +18,19 @@ How to create a new environment in Gymnasium from a MuJoCo model and train a rei
 In this example we will need python packages [MuJoCo](https://github.com/google-deepmind/mujoco), [Gymnasium](https://gymnasium.farama.org/), and [Stable-baselines](https://stable-baselines.readthedocs.io/en/master/).
 
 ```bash
-pip install mujoco==3.1.4
-pip install gymnasium==0.29.1
-pip install stable-baselines==2.3.0
+conda create -n gym 
+conda activate gym
 ```
 
+if the environment is already created, check it with `conda env list` and activate it with `conda activate gym`.
+
+
+```bash
+sudo apt install python3-pip
+pip install mujoco==3.1.4
+pip install gymnasium==0.29.1
+pip install stable-baselines==2.3.0 # or pip install stable-baselines
+```
 
 
 
