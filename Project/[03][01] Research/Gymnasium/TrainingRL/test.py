@@ -1,5 +1,5 @@
 from stable_baselines3 import SAC
-from ball_balance_env import TetrahedronLocomotionEnv
+from tetrahedron_locomotion_env import TetrahedronLocomotionEnv
 import cv2
 import imageio
 

@@ -127,6 +127,7 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         healthy_z_range: Tuple[float, float] = (0.1, 2.0), # only in planar surface
         reset_noise_scale: float = 0.1,
         episode_horizon: int = 1000,
+        step_number: int = 0,
         **kwargs,
     ):
         utils.EzPickle.__init__(
@@ -143,6 +144,7 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
             healthy_z_range,
             reset_noise_scale,
             episode_horizon,
+            step_number,
             **kwargs,
         )
 
@@ -159,6 +161,7 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         self._reset_noise_scale = reset_noise_scale
 
         self._episode_horizon = episode_horizon
+        self._step_number = step_number
 
         MujocoEnv.__init__(
             self,
@@ -210,9 +213,9 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
     
     def step(self, action):
         # step function of the environment
-        position_before = self.data.subtree_com[:3].copy()
+        position_before = self.data.subtree_com[0].copy()
         self.do_simulation(action, self.frame_skip)
-        position_after = self.data.subtree_com[:3].copy()
+        position_after = self.data.subtree_com[0].copy()
 
         velocity = (position_after - position_before) / self.dt
         x_velocity, y_velocity, z_velocity = velocity
@@ -220,6 +223,7 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         observation = self._get_obs()
         reward, reward_info = self._get_reward(x_velocity, action)
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
+        truncated = self._step_number > self._episode_horizon
 
         info = {
             "x_position": self.data.subtree_com[0],
@@ -234,7 +238,8 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         if self.render_mode == "human":
             self.render()
 
-        return observation, reward, terminated, info
+	# step must return five values: obs, reward, terminated, truncated, info.
+        return observation, reward, terminated, truncated, info
     
     def _get_reward(self, x_velocity:float, action):
         # reward function
@@ -246,7 +251,15 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         total_cost = ctrl_cost
 
         reward = total_reward - total_cost
-
+        
+        #print("forward_reward", forward_reward)
+        #print("healthy_reward", healthy_reward)
+        #print("total_reward", total_reward)
+        #print("ctrl_cost", ctrl_cost)
+        #print("total_cost", total_cost)
+        #print("reward", reward)
+        
+        
         reward_info = {
             "forward_reward": forward_reward,
             "healthy_reward": healthy_reward,
@@ -256,22 +269,33 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         return reward, reward_info
     
     def _get_obs(self):
-        position = self.data.subtree_com[:3]
-        velocity = self.data.subtree_com[:3] # keep it same for now
-        member_lengths = self.data.actuator_length[0:5]
-        node_positions = np.concatenate((np.array(self.data.geom("(1)").qpos[:3]),
-                                         np.array(self.data.geom("(2)").qpos[:3]),
-                                         np.array(self.data.geom("(3)").qpos[:3]),
-                                         np.array(self.data.geom("(6)").qpos[:3])), axis=0)
+        position = self.data.subtree_com[0] # we will have the first row
+        velocity = self.data.subtree_com[0] # keep it same for now
+        member_lengths = self.data.actuator_length[:6]
+        node_positions = np.concatenate((np.array(self.data.geom("(1)").xpos[:3]),   # not sure if .xpos is correct
+                                         np.array(self.data.geom("(2)").xpos[:3]),
+                                         np.array(self.data.geom("(3)").xpos[:3]),
+                                         np.array(self.data.geom("(6)").xpos[:3])), axis=0)
+
+        #print("position",position)
+        #print("velocity",velocity)
+        #print("member_lengths",member_lengths)
+        #print("node_pos",node_positions)
         
+        #return position
         return np.concatenate((position, velocity, member_lengths, node_positions), axis=0)
     
     def reset_model(self):
-        noise_low = -self._reset_noise_scale
-        noise_high = self._reset_noise_scale
-
+	# randomizing the initial configuration should be done in a different way for us
+        #noise_low = -self._reset_noise_scale
+        #noise_high = self._reset_noise_scale
+        
         qpos = self.init_qpos + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nq)
         qvel = self.init_qvel + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nv)
+        
+
+        #qpos = self.init_qpos 
+        #qvel = self.init_qvel
         self.set_state(qpos, qvel)
 
         observation = self._get_obs()
