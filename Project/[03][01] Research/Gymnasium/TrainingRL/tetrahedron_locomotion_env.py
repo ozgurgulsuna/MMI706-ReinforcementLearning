@@ -15,7 +15,7 @@ import os
 
 
 DEFAULT_CAMERA_CONFIG = {
-    "distance": 4.0,
+    "distance": 8.0,
 }
 
 # This is the class that defines the MuJoCo environment, it can be modified with the directions in the comments.
@@ -120,7 +120,7 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 10,
         ctrl_cost_weight: float = 0.0000,
-        healthy_reward: float = 5.0,
+        healthy_reward: float = 1.0,
         main_body: Union[int, str] = 1,
         size_cost_weight: float = 0.0001,
         terminate_when_unhealthy: bool = True,

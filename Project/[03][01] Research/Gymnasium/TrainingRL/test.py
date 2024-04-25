@@ -8,7 +8,7 @@ model = SAC.load("sac_truss_locomotion_2.zip")
 
 obs, info = env.reset()
 frames = []
-for _ in range(500):
+for _ in range(750):
     action, _states = model.predict(obs, deterministic=True)
     obs, reward, done, truncated, info = env.step(action)
     image = env.render()

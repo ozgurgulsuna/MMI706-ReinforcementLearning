@@ -181,3 +181,30 @@ WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Ti
 Tue Apr 23 23:29:22 2024
 WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 873.0240.
 
+Thu Apr 25 02:06:11 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 30.6720.
+
+Thu Apr 25 02:06:40 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 6.4300.
+
+Thu Apr 25 02:07:04 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 6.4180.
+
+Thu Apr 25 02:09:05 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 21. The simulation is unstable. Time = 7.2440.
+
+Thu Apr 25 02:10:38 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 0.1940.
+
+Thu Apr 25 02:12:42 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 105.3780.
+
+Thu Apr 25 02:27:24 2024
+WARNING: Inertia matrix is too close to singular at DOF 19. Check model. Time = 835.2600.
+
+Thu Apr 25 02:27:24 2024
+WARNING: Nan, Inf or huge value in QPOS at DOF 0. The simulation is unstable. Time = 835.2600.
+
+Thu Apr 25 02:41:01 2024
+WARNING: Nan, Inf or huge value in QACC at DOF 0. The simulation is unstable. Time = 50.3200.
+
