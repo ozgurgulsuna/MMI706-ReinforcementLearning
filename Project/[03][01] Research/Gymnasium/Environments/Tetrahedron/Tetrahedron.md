@@ -6,7 +6,7 @@ This environment is part of the Mujoco environments which contains general infor
 
 |----------------------|--------------------------------------|
 |**Action Space**      | ```Box(-1.0, 1.0, (6,), float32) ``` |
-|**Observation Space** | ```Box(-inf, inf, (16,), float64) ```|
+|**Observation Space** | ```Box(-inf, inf, (24,), float64) ```|
 |**import**            |```gymnasium.make("Tetrahedron-v1")```|
 
 ### Description ###
@@ -19,7 +19,7 @@ Problem parameters:
 - $l_i$ : length of the ith member ($i \in \{1,2,\cdots,m\}$)
 - $(x_i, y_i, z_i)$ : coordinates of the ith node ($i \in \{1,2,\cdots,n\}$)
 - $(x_{cm}, y_{cm}, z_{cm})$ : coordinates of the center of mass
-- $(x_{target}, y_{target}, z_{target})$ : coordinates of the target position
+- $(v_{cm_x}, v_{cm_y}, v_{cm_z})$ : velocity of the center of mass
 
 ### Action Space ###
 The action space is a ```Box(0,2,(6,), float32)```. An action is a vector of 6 elements where each element is the length of the member. The length of the member is between 0 and 2 meters.
@@ -45,21 +45,28 @@ The observation space is a ```Box(-inf, inf, (18,), float64)```. We might need t
 |   0   |  x-coord of CoM  |  -inf |  inf  |  coord_x  |  free   |   (m)     |
 |   1   |  y-coord of CoM  |  -inf |  inf  |  coord_y  |  free   |   (m)     |
 |   2   |  z-coord of CoM  |  -inf |  inf  |  coord_z  |  free   |   (m)     |
-|   3   |  x-orien of CoM  |  -inf |  inf  |  orient_x |  free   |   (rad)   |
-|   4   |  y-orien of CoM  |  -inf |  inf  |  orient_y |  free   |   (rad)   |
-|   5   |  z-orien of CoM  |  -inf |  inf  |  orient_z |  free   |   (rad)   |
-|   6   |  x-vel of CoM    |  -inf |  inf  |  vel_x    |  free   |   (m/s)   |
-|   7   |  y-vel of CoM    |  -inf |  inf  |  vel_y    |  free   |   (m/s)   |
-|   8   |  z-vel of CoM    |  -inf |  inf  |  vel_z    |  free   |   (m/s)   |
-|   9   |  x-ang.vel CoM   |  -inf |  inf  |  omega_x  |  free   |   (rad/s) |
-|  10   |  y-ang.vel CoM   |  -inf |  inf  |  omega_y  |  free   |   (rad/s) |
-|  11   |  z-ang.vel CoM   |  -inf |  inf  |  omega_z  |  free   |   (rad/s) |
-|  12   |  length of [M_1] |  -inf |  inf  |  length_1 |  slide  |   (m)     |
-|  13   |  length of [M_2] |  -inf |  inf  |  length_2 |  slide  |   (m)     |
-|  14   |  length of [M_3] |  -inf |  inf  |  length_3 |  slide  |   (m)     |
-|  15   |  length of [M_4] |  -inf |  inf  |  length_4 |  slide  |   (m)     |
-|  16   |  length of [M_5] |  -inf |  inf  |  length_5 |  slide  |   (m)     |
-|  17   |  length of [M_6] |  -inf |  inf  |  length_6 |  slide  |   (m)     |
+|   3   |  x-linvel of CoM |  -inf |  inf  |  vel_x    |  free   |   (m/s)   |
+|   4   |  y-linvel of CoM |  -inf |  inf  |  vel_y    |  free   |   (m/s)   |
+|   5   |  z-linvel of CoM |  -inf |  inf  |  vel_z    |  free   |   (m/s)   |
+|   6   |  length of [M_1] |  -inf |  inf  |  length_1 |  slide  |   (m)     |
+|   7   |  length of [M_2] |  -inf |  inf  |  length_2 |  slide  |   (m)     |
+|   8   |  length of [M_3] |  -inf |  inf  |  length_3 |  slide  |   (m)     |
+|   9   |  length of [M_4] |  -inf |  inf  |  length_4 |  slide  |   (m)     |
+|  10   |  length of [M_5] |  -inf |  inf  |  length_5 |  slide  |   (m)     |
+|  11   |  length of [M_6] |  -inf |  inf  |  length_6 |  slide  |   (m)     |
+|  12   |  x-coord of [N_1]|  -inf |  inf  |  coord_x  |  free   |   (m)     |
+|  13   |  y-coord of [N_1]|  -inf |  inf  |  coord_y  |  free   |   (m)     |
+|  14   |  z-coord of [N_1]|  -inf |  inf  |  coord_z  |  free   |   (m)     |
+|  15   |  x-coord of [N_2]|  -inf |  inf  |  coord_x  |  free   |   (m)     |
+|  16   |  y-coord of [N_2]|  -inf |  inf  |  coord_y  |  free   |   (m)     |
+|  17   |  z-coord of [N_2]|  -inf |  inf  |  coord_z  |  free   |   (m)     |
+|  18   |  x-coord of [N_3]|  -inf |  inf  |  coord_x  |  free   |   (m)     |
+|  19   |  y-coord of [N_3]|  -inf |  inf  |  coord_y  |  free   |   (m)     |
+|  20   |  z-coord of [N_3]|  -inf |  inf  |  coord_z  |  free   |   (m)     |
+|  21   |  x-coord of [N_4]|  -inf |  inf  |  coord_x  |  free   |   (m)     |
+|  22   |  y-coord of [N_4]|  -inf |  inf  |  coord_y  |  free   |   (m)     |
+|  23   |  z-coord of [N_4]|  -inf |  inf  |  coord_z  |  free   |   (m)     |
+
 
 - add node positions
 - add ground nodes
