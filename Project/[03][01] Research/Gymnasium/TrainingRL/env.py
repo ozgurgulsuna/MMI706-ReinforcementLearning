@@ -19,7 +19,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 # This is the class that defines the MuJoCo environment, it can be modified with the directions in the comments.
-class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
+class TetrahedronLocomotionEnv2(MujocoEnv, utils.EzPickle):
     # description of the environment.
     r"""Tetrahedron Truss Robot Environment.
     ### Description ###
@@ -331,5 +331,4 @@ class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
         # NOTE: we did not had a way to calculate center of mass here, solve it.
 
         
-
 
