@@ -3,61 +3,64 @@ from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-# Select topology
-N = 4 # Number of nodes
-M = 6 # Number of edges
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+# Define the edge lengths
+AB = 2.0
+AC = 1.0
+AD = 1.0
+BC = 1.0
+BD = 1.0
+CD = 2.0
 
-# Member lengths
-L = np.random.rand(M) + 1
-print(L)
-
-C = np.zeros((M, N))
-for i, (a, b) in enumerate(connectivity):
-    C[i, a] = 1
-    C[i, b] = -1
-
+# randomly generated edge lengths
+AB = np.random.rand()+1
+AC = np.random.rand()+1
+AD = np.random.rand()+1
+BC = np.random.rand()+1
+BD = np.random.rand()+1
+CD = np.random.rand()+1
 
 # Initial guess for the coordinates
 # B and C coordinates lie on the ground plane (z = 0), D is in 3D space
 initial_guess = [
-    0.0, 0.0, 0.0,  # A
-    np.random.random(), np.random.random(), 0.0,  # B
-    np.random.random(), np.random.random(), 0.0,  # C
-    *[np.random.random() for _ in range(M - 3)] # D, E, F, ...
+    0.0,                  0.0,                  0.0,                 # A
+    np.random.random()+1, np.random.random()+1, 0.0,                 # B
+    np.random.random()+1, np.random.random()+1, 0.0,                 # C
+    np.random.random()+1, np.random.random()+1, np.random.random()+1 # D
 ]
+
+print("initial guess: ", initial_guess)
 
 # Define the system of equations based on the edge lengths
 def equations(coords):
-    P = coords.reshape(-1, 3)
-    # print(P)
-    D = np.dot(C, P)
-
+    A = np.array([0.0, 0.0, 0.0])
+    B = np.array([coords[0], coords[1], 0])
+    C = np.array([coords[2], coords[3], 0])
+    D = np.array([coords[4], coords[5], coords[6]])
+    
+    
     return [
-        (np.linalg.norm(D[i])-(L[i])) for i in range(M)
+        np.linalg.norm(B - A) - AB,
+        np.linalg.norm(C - A) - AC,
+        np.linalg.norm(D - A) - AD,
+        np.linalg.norm(C - B) - BC,
+        np.linalg.norm(D - B) - BD,
+        np.linalg.norm(D - C) - CD,
     ]
-
 
 # Define bounds for each coordinate
 lower_bounds = [0,0,0,-np.inf, -np.inf, 0, 0, 0, 0, -np.inf, -np.inf, 0.0]
-upper_bounds = [1e-9,1e-9,1e-9,np.inf, np.inf, 1e-9, np.inf, np.inf, 1e-9, np.inf, np.inf, np.inf]
+upper_bounds = [1,1,1,np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]
 
 # Solve the system of equations with bounds
 result = least_squares(equations, initial_guess, bounds=(lower_bounds, upper_bounds))
 coords = result.x
 
 
-print(coords)
-           
-
-
 # Extract the coordinates of each vertex
-P = coords.reshape(-1, 3)
-A = P[0]
-B = P[1]
-C = P[2]
-D = P[3]
-
+A = np.array([0.0, 0.0, 0.0])
+B = np.array([coords[0], coords[1], 0])
+C = np.array([coords[2], coords[3], 0])
+D = np.array([coords[4], coords[5], coords[6]])
 
 # Print the length of each edge
 print("Length of edges:")
