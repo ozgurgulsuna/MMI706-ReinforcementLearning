@@ -6,13 +6,12 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Select topology
-model_name = "tetrahedron"  # "2-tetrahedron"
-N = 3 # Number of nodes 4
-M = 3 # Number of edges 6 
-connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
+model_name = "2-tetrahedron"  # "tetrahedron"
+N = 5 # Number of nodes 4
+M = 9 # Number of edges 6 
+# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # pyramid
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3], [2, 4], [4, 5], [5, 2], [6, 2], [6,4],[6,5]]) # pyramid
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
 
 # Create a graph from the connectivity
 G = nx.Graph()
@@ -156,7 +155,7 @@ print(P[0][0])
 # member template xml
 member_template = """
     <body name="[%s-0]" pos="%f %f %f" >
-    <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.05 0.95" material="metal" contype="1"/>
+    <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.475" material="metal" contype="1"/>
     </body>
 """
 
@@ -270,16 +269,12 @@ for edge in tree.edges:
     print(a, b)
     a = int(a[1])
     b = int(b[1])
-    print(a, b)
     print("A: ", P[a])
     print("B: ", P[b])
     print(np.linalg.norm(P[a] - P[b]))
-    print(P[a][0], P[a][1], P[a][2], P[b][0], P[b][1], P[b][2])
-    print(np.arctan2(P[b][1] - P[a][1], P[b][0] - P[a][0]))
-    print(np.arccos((P[b][2] - P[a][2])/np.linalg.norm(P[a] - P[b])))
-    print(np.arctan2(P[b][2] - P[a][2], np.linalg.norm(P[a] - P[b])))
     axis, angle = get_axis_angle(P[a], P[b])
     # roll, pitch, yaw = calculate_euler_angles(P[b], P[a])
-    members += member_template % (edge[0], 2*P[a][0], 2*P[a][1], 2*P[a][2], (P[b][0] - P[a][0])/2, (P[b][1] - P[a][1])/2, (P[b][2] - P[a][2])/2, axis[0], axis[1], axis[2], angle)
+    members += member_template % (edge[0], P[a][0], P[a][1], P[a][2], (P[b][0] - P[a][0])/2, (P[b][1] - P[a][1])/2, (P[b][2] - P[a][2])/2, axis[0], axis[1], axis[2], angle)
        
+
 print(members)
