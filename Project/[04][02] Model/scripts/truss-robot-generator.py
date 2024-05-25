@@ -8,9 +8,11 @@ from mpl_toolkits.mplot3d import Axes3D
 # Select topology
 # minimum is a triangle
 model_name = "triangle"  # "tetrahedron"
-# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
 
 N = np.max(connectivity) + 1
 M = len(connectivity)
@@ -18,6 +20,10 @@ M = len(connectivity)
 # Create a graph from the connectivity
 G = nx.Graph()
 G.add_edges_from(connectivity)
+
+pos = nx.spring_layout(G)  # positions for all nodes
+nx.draw(G, pos, with_labels=True, node_size=700)
+plt.show()
 
 # Create a tree ########################################################################################
 tree = nx.DiGraph()
@@ -48,7 +54,7 @@ plt.show()
 
 # Member lengths
 # L = np.random.rand(M) + 1
-L = np.array([2 for i in range(1, M+1)])
+L = np.array([1 for i in range(1, M+1)])
 print(L)
 
 C = np.zeros((M, N))
@@ -160,7 +166,7 @@ member_template = """
     <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.45" material="metal" contype="1"/>
     <body name="[%s-1]" pos="%f %f %f" >
         <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
-        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="0 0.95"/>
+        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="-0.95 0.95"/>
     </body>
     </body>
     """
@@ -281,10 +287,10 @@ for edge in tree.edges:
     print("A: ", P[a])
     print("B: ", P[b])
     print(np.linalg.norm(P[a] - P[b]))
-    axis, angle = get_axis_angle(P[b], P[a])
+    axis, angle = get_axis_angle(P[a], P[b])
     axis = [axis[0], axis[1], axis[2]]
     print("Axis: ", axis)
-    unit_dir = unit_direction_vector(P[b], P[a])
+    unit_dir = unit_direction_vector(P[a], P[b])
     print("Unit direction: ", unit_dir)
     normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
     print("Normal: ", normal_dir(unit_dir, axis))
