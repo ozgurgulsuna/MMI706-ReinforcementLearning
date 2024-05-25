@@ -6,12 +6,14 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Select topology
-model_name = "2-tetrahedron"  # "tetrahedron"
-N = 5 # Number of nodes 4
-M = 9 # Number of edges 6 
+# minimum is a triangle
+model_name = "triangle"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
+
+N = np.max(connectivity) + 1
+M = len(connectivity)
 
 # Create a graph from the connectivity
 G = nx.Graph()
@@ -46,7 +48,7 @@ plt.show()
 
 # Member lengths
 # L = np.random.rand(M) + 1
-L = np.array([1 for i in range(1, M+1)])
+L = np.array([2 for i in range(1, M+1)])
 print(L)
 
 C = np.zeros((M, N))
@@ -155,72 +157,22 @@ print(P[0][0])
 # member template xml
 member_template = """
     <body name="[%s-0]" pos="%f %f %f" >
-    <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.475" material="metal" contype="1"/>
+    <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[%s-1]" pos="%f %f %f" >
+        <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="0 0.95"/>
     </body>
-"""
+    </body>
+    """
 
 # <!--<joint name="Passive-%s" type="ball" pos="%f %f %f" axis="%f %f %f" damping=".9"/>-->
-#     <body name="[%s-1]" pos="%f %f %f" >
-#         <geom type="cylinder" pos="%f %f %f" euler="%f %f %f " size="0.04 0.95" material="gray" contype="1"/>
-#         <joint name="Linear-%s" type="slide" axis="%f %f %f" range="0 2"/>
-#     </body>
+
 # create members from the tree
 members = ""
-def calculate_euler_angles(point_a, point_b):
-  """
-  Calculates the Euler angles (roll, pitch, yaw) to transform a cylinder direction
-  from point A (pointing towards z-axis) to point B.
 
-  Args:
-      point_a (tuple): 3D coordinates of point A (x, y, z).
-      point_b (tuple): 3D coordinates of point B (x, y, z).
-
-  Returns:
-      tuple: Euler angles (roll, pitch, yaw) in degrees.
-  """
-
-  # Calculate direction vector from point A to point B
-  direction_vector = (point_b[0] - point_a[0],
-                      point_b[1] - point_a[1],
-                      point_b[2] - point_a[2])
-
-  # Normalize the direction vector
-  magnitude = math.sqrt(sum(x**2 for x in direction_vector))
-  if magnitude < 1e-6:
-    raise ValueError("Points A and B are too close together")
-  direction_vector = tuple(v / magnitude for v in direction_vector)
-
-  # Calculate yaw (rotation around z-axis)
-  yaw = math.atan2(direction_vector[0], direction_vector[1]) * 180 / math.pi
-
-  # Calculate pitch (rotation around x-axis after yaw)
-  # Handle special case where direction vector is parallel to x-axis (pitch = 0 or 180)
-  if abs(direction_vector[2]) < 1e-6:
-    pitch = 0
-  else:
-    # Project direction vector onto xz-plane
-    projected_vector = (direction_vector[0], 0, direction_vector[2])
-
-    # Calculate pitch using dot product and magnitude
-    pitch = math.atan2(projected_vector[2] * direction_vector[0],
-                       projected_vector[0] * math.sqrt(direction_vector[0]**2 + direction_vector[2]**2)) * 180 / math.pi
-
-  # Calculate roll (rotation around y-axis after yaw and pitch)
-  # Handle special case where direction vector is parallel to y-axis (roll indeterminate)
-  if abs(direction_vector[0]) < 1e-6 and abs(direction_vector[2]) < 1e-6:
-    roll = 0  # Roll is indeterminate in this case
-  else:
-    # Rotate direction vector by yaw and pitch
-    rotated_vector = (direction_vector[0] * math.cos(yaw) - direction_vector[1] * math.sin(yaw),
-                      direction_vector[0] * math.sin(yaw) + direction_vector[1] * math.cos(yaw),
-                      direction_vector[2])
-    rotated_vector = (rotated_vector[0], rotated_vector[2] * math.cos(pitch) - rotated_vector[1] * math.sin(pitch),
-                      rotated_vector[2] * math.sin(pitch) + rotated_vector[1] * math.cos(pitch))
-
-    # Calculate roll using cross product and magnitude
-    roll = math.atan2(rotated_vector[1], rotated_vector[0]) * 180 / math.pi
-
-  return roll, pitch, yaw
+def rotate_vector_90_around_z(vector):
+    x, y, z = vector
+    return (y, -x, z)
 
 def get_axis_angle(point_a, point_b):
   """
@@ -261,6 +213,63 @@ def get_axis_angle(point_a, point_b):
 
   return axis, angle
 
+def direction_vector(point1, point2):
+  """
+  Calculates the direction vector from point1 to point2.
+
+  Args:
+      point1: A list containing 3D coordinates (x1, y1, z1).
+      point2: A list containing 3D coordinates (x2, y2, z2).
+
+  Returns:
+      A list containing the direction vector (dx, dy, dz).
+  """
+  dx = point2[0] - point1[0]
+  dy = point2[1] - point1[1]
+  dz = point2[2] - point1[2]
+  return [dx, dy, dz]
+
+def unit_direction_vector(point1, point2):
+  """
+  Calculates the unit direction vector from point1 to point2.
+
+  Args:
+      point1: A list containing 3D coordinates (x1, y1, z1).
+      point2: A list containing 3D coordinates (x2, y2, z2).
+
+  Returns:
+      A list containing the unit direction vector.
+  """
+  direction = direction_vector(point1, point2)
+  magnitude = np.sqrt(sum(component**2 for component in direction))
+  if magnitude > 0:  # Avoid division by zero
+    return [component / magnitude for component in direction]
+  else:
+    return direction  # Points coincide, direction vector is [0, 0, 0]
+
+
+def rotation_matrix(axis, theta):
+    """
+    Return the rotation matrix associated with counterclockwise rotation about
+    the given axis by theta radians.
+    """
+    axis = np.asarray(axis)
+    axis = axis / np.sqrt(np.dot(axis, axis))
+    a = np.cos(theta / 2.0)
+    b, c, d = -axis * np.sin(theta / 2.0)
+    aa, bb, cc, dd = a * a, b * b, c * c, d * d
+    bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
+    return np.array([[aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)],
+                     [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
+                     [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
+
+def rotate_vector(vector, axis, theta):
+    """
+    Rotate a vector around the given axis by theta radians.
+    """
+    rotation_matrix_ = rotation_matrix(axis, theta)
+    return np.dot(rotation_matrix_, vector)
+
 for edge in tree.edges:
     print(edge)
     a, b = edge
@@ -272,9 +281,24 @@ for edge in tree.edges:
     print("A: ", P[a])
     print("B: ", P[b])
     print(np.linalg.norm(P[a] - P[b]))
-    axis, angle = get_axis_angle(P[a], P[b])
-    # roll, pitch, yaw = calculate_euler_angles(P[b], P[a])
-    members += member_template % (edge[0], P[a][0], P[a][1], P[a][2], (P[b][0] - P[a][0])/2, (P[b][1] - P[a][1])/2, (P[b][2] - P[a][2])/2, axis[0], axis[1], axis[2], angle)
-       
+    axis, angle = get_axis_angle(P[b], P[a])
+    axis = [axis[0], axis[1], axis[2]]
+    print("Axis: ", axis)
+    unit_dir = unit_direction_vector(P[b], P[a])
+    print("Unit direction: ", unit_dir)
+    normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
+    print("Normal: ", normal_dir(unit_dir, axis))
 
-print(members)
+    L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
+
+
+
+    # orth_axis = rotate_vector_90_around_z(axis)
+    
+    # roll, pitch, yaw = calculate_euler_angles(P[b], P[a])
+
+    P_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+
+    members += member_template % (edge[0], P[a][0], P[a][1], P[a][2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2])
+    print(members)
