@@ -8,7 +8,8 @@ from mpl_toolkits.mplot3d import Axes3D
 # Select topology
 # minimum is a triangle
 model_name = "triangle"  # "tetrahedron"
-connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
+connectivity = np.array([[0, 1], [1, 2], [2, 0]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
@@ -157,7 +158,7 @@ ax.set_zlim([ 0, 2])
 
 
 # Show the plot
-# plt.show()
+plt.show()
 
 ## Create MuJoCo model from the coordinates
 
@@ -324,19 +325,10 @@ for edge in tree.edges:
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
-    # members += member_template % (edge[0], P[a][0], P[a][1], P[a][2],edge[0], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2])
-    #members[i]["XML"].append(member_template % (edge[0], P[a][0], P[a][1], P[a][2],edge[0], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2]))
-    
-    # # in leaf nodes we should not add "%s" to the end of the member
-    # print("members")
-    # print(members)
-    # print(edge)
-    # print(edge[0])
-    # print(edge[1])
-    # print(list(tree.successors(edge[1])))
-    # if not list(tree.successors(edge[1])):
-    #     members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],edge[1], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "")
-    # else:
+   
+
+
+
     members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],edge[1], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "%s")
 print(members)
 print(members[1])
@@ -352,6 +344,24 @@ hmm = hmm +members[3] % ""
 # print(type(members[1]))
 # print(type(members[2]))
 print("test")
+
+# generate a precessor list using the tree, recursively
+def get_predecessors_to_root(G, start_node):
+    predecessors = []
+    current_node = start_node
+    
+    while True:
+        # Get the predecessors of the current node
+        pred = list(G.predecessors(current_node))
+        
+        if not pred:  # If there are no predecessors, we have reached the root
+            break
+        
+        # Assume there is only one predecessor (if there could be more, handle accordingly)
+        current_node = pred[0]
+        predecessors.append(current_node)
+
+    return predecessors
 
 def generate_member(node):
     if node == "0-0":
@@ -378,7 +388,36 @@ def generate_member(node):
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
-    return member_template % (node, P[a][0], P[a][1], P[a][2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
+
+
+
+    litt = get_predecessors_to_root(tree, node)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    print(litt)
+
+    correct = [0,0,0]
+    for i in litt:
+        a, b = i.split("-")
+        print("a, b")
+        print(a, b)
+        a = int(a)
+        b = int(b)
+        if a == 0 and b == 0:
+            continue
+        print("A: ", P[a])
+        correct += P[a]
+        correct -= (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+
+
+    
+    print("correct")
+    print(correct)
+
+
+
+
+
+    return member_template % (node, P[b][0]-correct[0], P[b][1]-correct[1], P[b][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
 
 def generate_member2(node):
     print("node")
@@ -407,7 +446,33 @@ def generate_member2(node):
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
-    return member_template % (node, P[a][0], P[a][1], P[a][2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+    litt = get_predecessors_to_root(tree, node)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    print(litt)
+
+    correct = [0,0,0]
+    for i in litt:
+        a, b = i.split("-")
+        print("a, b")
+        print(a, b)
+        a = int(a)
+        b = int(b)
+        if a == 0 and b == 0:
+            continue
+        print("A: ", P[a])
+        correct += P[a]
+        correct -= (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+
+
+    
+    print("correct")
+    print(correct)
+
+
+
+
+
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 
     
 
