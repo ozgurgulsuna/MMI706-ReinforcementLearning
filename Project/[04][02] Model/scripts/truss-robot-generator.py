@@ -25,7 +25,7 @@ G.add_edges_from(connectivity)
 
 pos = nx.spring_layout(G)  # positions for all nodes
 nx.draw(G, pos, with_labels=True, node_size=700)
-plt.show()
+# plt.show()
 
 # Create a tree ########################################################################################
 tree = nx.DiGraph()
@@ -52,7 +52,7 @@ tree = tree.reverse()
 # Draw the tree
 pos = nx.spring_layout(tree)  # positions for all nodes
 nx.draw(tree, pos, with_labels=True, node_size=700)
-plt.show()
+# plt.show()
 
 ###########################################################################################################################
 
@@ -60,7 +60,7 @@ plt.show()
 # Member lengths
 # L = np.random.rand(M) + 1
 L = np.array([1 for i in range(1, M+1)])
-# print(L)
+print(L)
 
 C = np.zeros((M, N))
 for i, (a, b) in enumerate(connectivity):
@@ -159,7 +159,7 @@ ax.set_zlim([ 0, 2])
 
 
 # Show the plot
-plt.show()
+# plt.show()
 
 ## Create MuJoCo model from the coordinates
 
@@ -515,7 +515,6 @@ def generate_member2(node):
 
 # Traverse the tree and combine members
 def combine_members(tree, node):
-    correcta = [0,0,0]
     children = list(tree.successors(node))
     # print("node")
     # print(node)
@@ -533,13 +532,75 @@ def combine_members(tree, node):
         return combined_member
     return last % combined_member
 
-print(P[0])
-
-
 # Find the root node (assuming single root)
 root = [node for node in tree.nodes if not list(tree.predecessors(node))][0]
 # print(root)
 final_member = combine_members(tree, root)
 
 print(final_member)
+
+# create equality constraints
+# find leaf nodes, for all leaf nodes, write the equality constraint
+equality_template = """
+    <connect name="kinematic_link_%s" active="true" body1="[%s-1]" body2="[%s-1]" anchor=" %f %f %f" />
+"""
+leaf_count = 0
+i = 0
+for nodes in tree.nodes():
+    if not list(tree.successors(nodes)):
+        leaf_count += 1
+
+leaves = np.zeros((leaf_count, 2))
+leaffo = {}
+
+for nodes in tree.nodes():
+    if not list(tree.successors(nodes)):
+        leaves[i] = [nodes.split("-")[0], nodes.split("-")[1]]
+        leaffo[i] = nodes
+        i += 1
+
+print(leaves)
+
+def find_node(tree, leaf):
+    for nodes in tree.nodes():
+        if nodes.split("-")[1] == leaf.split("-")[1] and nodes != leaf:
+            return nodes
+        
+# Anchor is calculated with respect to the body1
+
+def calculate_anchor(P1, P2):
+    return -(P1-P2)/np.linalg.norm(P1-P2)*0.5
+
+equality = ""
+l = 0
+for leaf in leaves:
+    equality += equality_template % (l, leaffo[l], find_node(tree, leaffo[l]), calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[0], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[1], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[2])
+    l += 1
+
+header = """<mujoco model="tetrahedron">
+  <compiler angle="radian" meshdir="assets" autolimits="true"/>
+  <option gravity="0 0 -9.81" timestep="0.002" />
+
+  <option cone="elliptic" impratio="10"/>
+
+  <asset>
+    <material name="metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+    <material name="red" rgba="0.9 0.1 0.1 1"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
+  </asset>
+
+  <worldbody>
+"""
+
+final_XML = header +final_member + "  </worldbody>"+ "<equality>"+ equality + "</equality>"+ "</mujoco>"
+print(final_XML)
+
+
+    
+
+
+
+
 
