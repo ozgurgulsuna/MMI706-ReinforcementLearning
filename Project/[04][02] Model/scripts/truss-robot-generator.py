@@ -163,10 +163,11 @@ print(P[0][0])
 # member template xml
 member_template = """
     <body name="[%s-0]" pos="%f %f %f" >
+    <joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>
     <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.45" material="metal" contype="1"/>
     <body name="[%s-1]" pos="%f %f %f" >
         <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
-        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="-0.95 0.95"/>
+        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="0 0.95"/>
     </body>
     </body>
     """
@@ -305,6 +306,8 @@ for edge in tree.edges:
 
     P_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    Passives = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
 
-    members += member_template % (edge[0], P[a][0], P[a][1], P[a][2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2])
+    members += member_template % (edge[0], P[a][0], P[a][1], P[a][2],edge[0], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2])
+
     print(members)
