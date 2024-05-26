@@ -11,9 +11,9 @@ from mpl_toolkits.mplot3d import Axes3D
 model_name = "triangle"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # tetrahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
 
 N = np.max(connectivity) + 1
@@ -159,7 +159,7 @@ ax.set_zlim([ 0, 2])
 
 
 # Show the plot
-# plt.show()
+plt.show()
 
 ## Create MuJoCo model from the coordinates
 
@@ -561,9 +561,19 @@ for nodes in tree.nodes():
 
 print(leaves)
 
+def find_all_possible_connections(tree, node):
+    connections = []
+    for nodes in tree.nodes():
+        if nodes.split("-")[0] == node.split("-")[1] and nodes != node:
+            connections.append(nodes)
+    return connections
+
+short_list = []
+
 def find_node(tree, leaf):
     for nodes in tree.nodes():
         if nodes.split("-")[1] == leaf.split("-")[1] and nodes != leaf:
+            short_list.append(nodes)
             return nodes
         
 # Anchor is calculated with respect to the body1
@@ -573,9 +583,16 @@ def calculate_anchor(P1, P2):
 
 equality = ""
 l = 0
+# for leaf in leaves:
+#     equality += equality_template % (l, leaffo[l], find_node(tree, leaffo[l]), calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[0], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[1], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[2])
+#     l += 1
+
 for leaf in leaves:
-    equality += equality_template % (l, leaffo[l], find_node(tree, leaffo[l]), calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[0], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[1], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[2])
+    for nodes in find_all_possible_connections(tree, leaffo[int(leaf[0])]):
+        equality += equality_template % (l, leaffo[l], nodes, calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[0], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[1], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[2])
     l += 1
+
+
 
 header = """<mujoco model="tetrahedron">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
