@@ -44,6 +44,9 @@ for i in range(0, depth+1):
             else:
                 tree.add_edge(f"{i}-{connectivity[j][1]}", "0-0")
 
+# reverse directions
+tree = tree.reverse()
+
 # Draw the tree
 pos = nx.spring_layout(tree)  # positions for all nodes
 nx.draw(tree, pos, with_labels=True, node_size=700)
@@ -154,7 +157,7 @@ ax.set_zlim([ 0, 2])
 
 
 # Show the plot
-plt.show()
+# plt.show()
 
 ## Create MuJoCo model from the coordinates
 
@@ -168,6 +171,7 @@ member_template = """
     <body name="[%s-1]" pos="%f %f %f" >
         <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
         <joint name="Linear-%s" type="slide" axis="%f %f %f" range="0 0.95"/>
+        %s
     </body>
     </body>
     """
@@ -175,7 +179,7 @@ member_template = """
 # <!--<joint name="Passive-%s" type="ball" pos="%f %f %f" axis="%f %f %f" damping=".9"/>-->
 
 # create members from the tree
-members = ""
+# members = ""
 
 def rotate_vector_90_around_z(vector):
     x, y, z = vector
@@ -277,7 +281,18 @@ def rotate_vector(vector, axis, theta):
     rotation_matrix_ = rotation_matrix(axis, theta)
     return np.dot(rotation_matrix_, vector)
 
+
+members = {}
+# # create a members structure, also storing name information
+# for i in range(1, M):
+#     members[i] = ""
+
+# print("members",members)
+
+i = 0
+
 for edge in tree.edges:
+    i += 1
     print(edge)
     a, b = edge
     a = a.split("-")
@@ -291,7 +306,7 @@ for edge in tree.edges:
     axis, angle = get_axis_angle(P[a], P[b])
     axis = [axis[0], axis[1], axis[2]]
     print("Axis: ", axis)
-    unit_dir = unit_direction_vector(P[a], P[b])
+    unit_dir = unit_direction_vector(P[b], P[a])
     print("Unit direction: ", unit_dir)
     normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
     print("Normal: ", normal_dir(unit_dir, axis))
@@ -304,10 +319,57 @@ for edge in tree.edges:
     
     # roll, pitch, yaw = calculate_euler_angles(P[b], P[a])
 
-    P_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
-    Passives = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
+    Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
+    Passives = [0 ,0, 0 ]
 
-    members += member_template % (edge[0], P[a][0], P[a][1], P[a][2],edge[0], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2])
+    # members += member_template % (edge[0], P[a][0], P[a][1], P[a][2],edge[0], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2])
+    #members[i]["XML"].append(member_template % (edge[0], P[a][0], P[a][1], P[a][2],edge[0], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[0], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[0], L_dir[0], L_dir[1], L_dir[2]))
+    
+    # # in leaf nodes we should not add "%s" to the end of the member
+    # print("members")
+    # print(members)
+    # print(edge)
+    # print(edge[0])
+    # print(edge[1])
+    # print(list(tree.successors(edge[1])))
+    # if not list(tree.successors(edge[1])):
+    #     members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],edge[1], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "")
+    # else:
+    members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],edge[1], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "%s")
+print(members)
+print(members[1])
+print(members[2])
+print(members[3])
 
-    print(members)
+
+hmm = members[1] % (members[2]%(""))
+
+hmm = hmm +members[3] % ""
+
+# print(hmm)
+# print(type(members[1]))
+# print(type(members[2]))
+print("test")
+
+# Traverse the tree and combine members
+def combine_members(tree, node):
+    children = list(tree.successors(node))
+    print(children)
+    if not children:
+        return members[int(node.split('-')[0])]
+    combined_member = ""
+    for child in children:
+        combined_member += combine_members(tree, child)
+    print("star")
+    print(combined_member)
+    return members.get(int(node.split('-')[0]), "") % combined_member
+
+# Find the root node (assuming single root)
+root = [node for node in tree.nodes if not list(tree.predecessors(node))][0]
+print(root)
+final_member = combine_members(tree, root)
+
+print(final_member)
+
