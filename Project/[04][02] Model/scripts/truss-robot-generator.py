@@ -353,18 +353,81 @@ hmm = hmm +members[3] % ""
 # print(type(members[2]))
 print("test")
 
+def generate_member(node):
+    if node == "0-0":
+       return ""
+    a = node.split('-')[0]
+    b = node.split('-')[1]
+    a = int(a)
+    b = int(b)
+    print(a, b)
+    print("A: ", P[a])
+    print("B: ", P[b])
+    print(np.linalg.norm(P[a] - P[b]))
+    axis, angle = get_axis_angle(P[a], P[b])
+    axis = [axis[0], axis[1], axis[2]]
+    print("Axis: ", axis)
+    unit_dir = unit_direction_vector(P[b], P[a])
+    print("Unit direction: ", unit_dir)
+    normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
+    print("Normal: ", normal_dir(unit_dir, axis))
+    L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
+
+    P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
+    L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
+    Passives = [0 ,0, 0 ]
+
+    return member_template % (node, P[a][0], P[a][1], P[a][2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
+
+def generate_member2(node):
+    print("node")
+    print(node)
+    if node == "0-0":
+       return ""
+    a = node.split('-')[0]
+    b = node.split('-')[1]
+    print(a, b)
+    a = int(a)
+    b = int(b)
+    print("A: ", P[a])
+    print("B: ", P[b])
+    print(np.linalg.norm(P[a] - P[b]))
+    axis, angle = get_axis_angle(P[a], P[b])
+    axis = [axis[0], axis[1], axis[2]]
+    print("Axis: ", axis)
+    unit_dir = unit_direction_vector(P[b], P[a])
+    print("Unit direction: ", unit_dir)
+    normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
+    print("Normal: ", normal_dir(unit_dir, axis))
+    L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
+
+    P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
+    L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
+    Passives = [0 ,0, 0 ]
+
+    return member_template % (node, P[a][0], P[a][1], P[a][2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+
+    
+
 # Traverse the tree and combine members
 def combine_members(tree, node):
     children = list(tree.successors(node))
+    print("node")
+    print(node)
+    print("children")
     print(children)
+    
     if not children:
-        return members[int(node.split('-')[0])]
+        return generate_member2(node)
     combined_member = ""
     for child in children:
         combined_member += combine_members(tree, child)
     print("star")
     print(combined_member)
-    return members.get(int(node.split('-')[0]), "") % combined_member
+    last = generate_member(node)
+    return last % combined_member
 
 # Find the root node (assuming single root)
 root = [node for node in tree.nodes if not list(tree.predecessors(node))][0]
