@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 import math
 import networkx as nx
 from scipy.optimize import least_squares
@@ -9,8 +10,8 @@ from mpl_toolkits.mplot3d import Axes3D
 # minimum is a triangle
 model_name = "triangle"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
-connectivity = np.array([[0, 1], [1, 2], [2, 0]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+# connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
@@ -59,7 +60,7 @@ plt.show()
 # Member lengths
 # L = np.random.rand(M) + 1
 L = np.array([1 for i in range(1, M+1)])
-print(L)
+# print(L)
 
 C = np.zeros((M, N))
 for i, (a, b) in enumerate(connectivity):
@@ -98,9 +99,9 @@ C_upper = [np.inf, np.inf, 1e-9]
 
 lower_bounds = A_lower + B_lower + C_lower + [-np.inf, -np.inf, 0.0]* (N - 3)
 upper_bounds = A_upper + B_upper + C_upper + [np.inf, np.inf, np.inf]* (N - 3)
-print(lower_bounds)
-print(upper_bounds)
-print(initial_guess)
+# print(lower_bounds)
+# print(upper_bounds)
+# print(initial_guess)
 # Solve the system of equations with bounds
 result = least_squares(equations, initial_guess, bounds=(lower_bounds, upper_bounds))
 coords = result.x
@@ -108,11 +109,11 @@ coords = result.x
 # Move the coordinates such that center of mass is at the origin
 center_of_mass = np.mean(coords.reshape(-1, 3), axis=0)
 
-print(center_of_mass)
+# print(center_of_mass)
 center_of_mass[2] = 0
 coords = coords.reshape(-1, 3) - center_of_mass
 
-print(coords)
+# print(coords)
            
 # Extract the coordinates of each vertex
 P = coords.reshape(-1, 3)
@@ -162,7 +163,6 @@ plt.show()
 
 ## Create MuJoCo model from the coordinates
 
-print(P[0][0])
 
 # member template xml
 member_template = """
@@ -298,19 +298,19 @@ for edge in tree.edges:
     a, b = edge
     a = a.split("-")
     b = b.split("-")
-    print(a, b)
     a = int(a[1])
     b = int(b[1])
+    print(a, b)
     print("A: ", P[a])
     print("B: ", P[b])
-    print(np.linalg.norm(P[a] - P[b]))
+    # print(np.linalg.norm(P[a] - P[b]))
     axis, angle = get_axis_angle(P[a], P[b])
     axis = [axis[0], axis[1], axis[2]]
-    print("Axis: ", axis)
+    # print("Axis: ", axis)
     unit_dir = unit_direction_vector(P[b], P[a])
-    print("Unit direction: ", unit_dir)
+    # print("Unit direction: ", unit_dir)
     normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
-    print("Normal: ", normal_dir(unit_dir, axis))
+    # print("Normal: ", normal_dir(unit_dir, axis))
 
     L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
 
@@ -330,7 +330,7 @@ for edge in tree.edges:
 
 
     members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],edge[1], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "%s")
-print(members)
+# print(members)
 print(members[1])
 print(members[2])
 print(members[3])
@@ -343,7 +343,9 @@ hmm = hmm +members[3] % ""
 # print(hmm)
 # print(type(members[1]))
 # print(type(members[2]))
-print("test")
+# print("test")
+
+
 
 # generate a precessor list using the tree, recursively
 def get_predecessors_to_root(G, start_node):
@@ -364,6 +366,7 @@ def get_predecessors_to_root(G, start_node):
     return predecessors
 
 def generate_member(node):
+    correct = [0,0,0]
     if node == "0-0":
        return ""
     a = node.split('-')[0]
@@ -373,14 +376,14 @@ def generate_member(node):
     print(a, b)
     print("A: ", P[a])
     print("B: ", P[b])
-    print(np.linalg.norm(P[a] - P[b]))
+    # print(np.linalg.norm(P[a] - P[b]))
     axis, angle = get_axis_angle(P[a], P[b])
     axis = [axis[0], axis[1], axis[2]]
-    print("Axis: ", axis)
+    # print("Axis: ", axis)
     unit_dir = unit_direction_vector(P[b], P[a])
-    print("Unit direction: ", unit_dir)
+    # print("Unit direction: ", unit_dir)
     normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
-    print("Normal: ", normal_dir(unit_dir, axis))
+    # print("Normal: ", normal_dir(unit_dir, axis))
     L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
 
     P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
@@ -388,57 +391,71 @@ def generate_member(node):
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
+    prev = list(tree.predecessors(node))
+    print("prev")
+    print(prev)
+    prev_a, prev_b = prev[0].split("-")
+    prev_a = int(prev_a)
+    prev_b = int(prev_b)
+
+    if not (prev_a == 0 and prev_b == 0):
+        correcting_factor = (P[prev_b] - P[prev_a])/(np.linalg.norm(P[prev_b] - P[prev_a]))*0.50
+    else:
+        correcting_factor = [0,0,0]
+
+    correct = P[prev_a].copy() + correcting_factor.copy()
 
 
-
-    litt = get_predecessors_to_root(tree, node)
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    print(litt)
-
-    correct = [0,0,0]
-    for i in litt:
-        a, b = i.split("-")
-        print("a, b")
-        print(a, b)
-        a = int(a)
-        b = int(b)
-        if a == 0 and b == 0:
-            continue
-        print("A: ", P[a])
-        correct += P[a]
-        correct -= (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+#     correct = [0,0,0]
+#     prev = list(tree.predecessors(node))
+#     print("prev")
+#     print(prev)
+#     prev_a, prev_b = prev[0].split("-")
+#     prev_a = int(prev_a)
+#     prev_b = int(prev_b)
+#     if a == 0 and b == 0:
+#         correct = [0,0,0]
+#     elif prev_a == 0 and prev_b == 0:
+#         correct = [0,0,0]
+#     else:
+#         correct = P[prev_a]
+#         correct += (P[prev_b] - P[prev_a])/(np.linalg.norm(P[prev_b] - P[prev_a]))*0.50
+#         correct = [0,0,0]
 
 
     
-    print("correct")
-    print(correct)
+#     print("correct")
+#     print(correct)
 
 
 
-
-
-    return member_template % (node, P[b][0]-correct[0], P[b][1]-correct[1], P[b][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
+#     print("member_template")
+#     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+# )
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
 
 def generate_member2(node):
-    print("node")
-    print(node)
+    correct = [0,0,0]
+
+    # print("node")
+    # print(node)
     if node == "0-0":
        return ""
     a = node.split('-')[0]
     b = node.split('-')[1]
-    print(a, b)
+    # print(a, b)
     a = int(a)
     b = int(b)
-    print("A: ", P[a])
-    print("B: ", P[b])
-    print(np.linalg.norm(P[a] - P[b]))
+    # print("A: ", P[a])
+    # print("B: ", P[b])
+    # print(np.linalg.norm(P[a] - P[b]))
     axis, angle = get_axis_angle(P[a], P[b])
     axis = [axis[0], axis[1], axis[2]]
-    print("Axis: ", axis)
+    # print("Axis: ", axis)
     unit_dir = unit_direction_vector(P[b], P[a])
-    print("Unit direction: ", unit_dir)
+    # print("Unit direction: ", unit_dir)
     normal_dir = lambda unit_dir, axis:np.cross(unit_dir, axis)  # C'mon guys its 2024
-    print("Normal: ", normal_dir(unit_dir, axis))
+    # print("Normal: ", normal_dir(unit_dir, axis))
     L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
 
     P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
@@ -446,57 +463,82 @@ def generate_member2(node):
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
-    litt = get_predecessors_to_root(tree, node)
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    print(litt)
+    prev = list(tree.predecessors(node))
+    print("prev")
+    print(prev)
+    prev_a, prev_b = prev[0].split("-")
+    prev_a = int(prev_a)
+    prev_b = int(prev_b)
 
-    correct = [0,0,0]
-    for i in litt:
-        a, b = i.split("-")
-        print("a, b")
-        print(a, b)
-        a = int(a)
-        b = int(b)
-        if a == 0 and b == 0:
-            continue
-        print("A: ", P[a])
-        correct += P[a]
-        correct -= (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    if not (prev_a == 0 and prev_b == 0):
+        correcting_factor = (P[prev_b] - P[prev_a])/(np.linalg.norm(P[prev_b] - P[prev_a]))*0.50
+    else:
+        correcting_factor = [0,0,0]
+
+    correct = P[prev_a].copy() + correcting_factor.copy()
+
+
+
+
+
+
+
+#     correct = [0,0,0]
+#     prev = list(tree.predecessors(node))
+#     print("prev")
+#     print(prev)
+#     prev_a, prev_b = prev[0].split("-")
+#     prev_a = int(prev_a)
+#     prev_b = int(prev_b)
+#     if a == 0 and b == 0:
+#         correct = [0,0,0]
+#     elif prev_a == 0 and prev_b == 0:
+#         correct = [0,0,0]
+#     else:
+#         correct = P[prev_a]
+#         correct += (P[prev_b] - P[prev_a])/(np.linalg.norm(P[prev_b] - P[prev_a]))*0.50
+#         correct = [0,0,0]
 
 
     
-    print("correct")
-    print(correct)
+#     # print("correct")
+#     # print(correct)
 
+#     print("correct")
+#     print(correct)
 
-
-
-
+#     print("member_template")
+#     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+# )
     return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
-
     
 
 # Traverse the tree and combine members
 def combine_members(tree, node):
+    correcta = [0,0,0]
     children = list(tree.successors(node))
-    print("node")
-    print(node)
-    print("children")
-    print(children)
+    # print("node")
+    # print(node)
+    # print("children")
+    # print(children)
     
     if not children:
         return generate_member2(node)
     combined_member = ""
     for child in children:
         combined_member += combine_members(tree, child)
-    print("star")
-    print(combined_member)
+    # print("star")
     last = generate_member(node)
+    if last == "":
+        return combined_member
     return last % combined_member
+
+print(P[0])
+
 
 # Find the root node (assuming single root)
 root = [node for node in tree.nodes if not list(tree.predecessors(node))][0]
-print(root)
+# print(root)
 final_member = combine_members(tree, root)
 
 print(final_member)
