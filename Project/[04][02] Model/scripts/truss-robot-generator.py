@@ -1,3 +1,7 @@
+#%╭─╮╭─╮╭─╮╱╱╱╱╱╱╱╱╱╭╮╱╭┬─╮╭─╮╭─╮┬─╮┌─╮╭─╮╱╱╱╱╭─╮┬─╮┌─╱╱╱╱╱╱╱╱╱┌─╮╭─╮╱╱╱╱╭─╮╭─╮╭─╮┬─╮┌─╮╭─╮╱╱╱╱╱╱╱╱╱╭┬─╮┬─╮
+#  └─╯┴─╯╰┴─╯╰─────────╯╱╰─╯┴──╯╰─╯─╯┴─╯╰┴─╯╰──╯╰─╯─╯──────────╯┴─╯╰┴─╯╰─╯─╯┴─╯╰┴─╯╰─────────╯╱╰─╯┴──╯╰─|
+# TRUSS ROBOT GENERATOR
+
 import numpy as np
 import copy
 import math
@@ -8,15 +12,15 @@ from mpl_toolkits.mplot3d import Axes3D
 
 # Select topology
 # minimum is a triangle
-model_name = "triangle"  # "tetrahedron"
-# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
-# connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+model_name = "octahedron"  # "tetrahedron"
+# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
+# connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1.5-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tetrahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # Octahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
 
 # needs to be ordered such that each node number is connected to the next number in line (1 should have a connection with 2)
 # otherwise the tree will not be created correctly
@@ -90,9 +94,14 @@ def equations(coords):
     # print(P)
     D = np.dot(C, P)
 
-    return [
-        (np.linalg.norm(D[i])-(L[i])) for i in range(M)
+    residuals = [
+        (np.linalg.norm(D[i]) - L[i]) for i in range(M)
     ]
+    
+    # Adding the penalty as additional residuals
+    penalty = 0.01 * np.abs(coords)  # Scale the penalty appropriately
+    
+    return residuals + penalty.tolist()
 
 
 # Define bounds for each coordinate
@@ -109,8 +118,10 @@ upper_bounds = A_upper + B_upper + C_upper + [np.inf, np.inf, np.inf]* (N - 3)
 # print(upper_bounds)
 # print(initial_guess)
 # Solve the system of equations with bounds
+
 result = least_squares(equations, initial_guess, bounds=(lower_bounds, upper_bounds))
 coords = result.x
+
 
 # Move the coordinates such that center of mass is at the origin
 center_of_mass = np.mean(coords.reshape(-1, 3), axis=0)
@@ -173,7 +184,7 @@ plt.show()
 # member template xml
 member_template = """
     <body name="[%s-0]" pos="%f %f %f" >
-    <joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>
+    %s
     <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.45" material="metal" contype="1"/>
     <body name="[%s-1]" pos="%f %f %f" >
         <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
@@ -331,11 +342,15 @@ for edge in tree.edges:
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
+    passive_template = """<joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>"""
    
+    if edge[1] == "0-1":
+        passives = ""
+    else:
+        passives = passive_template % (edge[1], Passives[0], Passives[1], Passives[2])
 
 
-
-    members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],edge[1], Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "%s")
+    members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "%s")
 # print(members)
 print(members[1])
 print(members[2])
@@ -412,6 +427,14 @@ def generate_member(node):
     correct = P[prev_a].copy() + correcting_factor.copy()
 
 
+    passive_template = """<joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>"""
+   
+    if node == "0-1":
+        passives = ""
+    else:
+        passives = passive_template % (node, Passives[0], Passives[1], Passives[2])
+
+
 #     correct = [0,0,0]
 #     prev = list(tree.predecessors(node))
 #     print("prev")
@@ -438,7 +461,7 @@ def generate_member(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
 
 def generate_member2(node):
     correct = [0,0,0]
@@ -489,6 +512,14 @@ def generate_member2(node):
 
 
 
+    passive_template = """<joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>"""
+   
+    if node == "0-1":
+        passives = ""
+    else:
+        passives = passive_template % (node, Passives[0], Passives[1], Passives[2])
+
+
 #     correct = [0,0,0]
 #     prev = list(tree.predecessors(node))
 #     print("prev")
@@ -507,17 +538,16 @@ def generate_member2(node):
 
 
     
-#     # print("correct")
-#     # print(correct)
-
 #     print("correct")
 #     print(correct)
+
+
 
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
-    
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+   
 
 # Traverse the tree and combine members
 def combine_members(tree, node):
@@ -548,8 +578,7 @@ print(final_member)
 # create equality constraints
 # find leaf nodes, for all leaf nodes, write the equality constraint
 equality_template = """
-    <connect name="kinematic_link_%s" active="true" body1="[%s-1]" body2="[%s-1]" anchor=" %f %f %f" />
-"""
+<connect name="kinematic_link_%s" active="true" body1="[%s-1]" body2="[%s-1]" anchor=" %f %f %f" />"""
 leaf_count = 0
 i = 0
 for nodes in tree.nodes():
@@ -609,11 +638,28 @@ for leaf in leaves:
 print(l)
 print(p)
 
+# create actuators from members
+actuator_template = """
+<position name="Member-%s" joint="Linear-%s" kp="18000"  kv="10000" ctrlrange="0 1" />"""
+
+actuator = ""
+
+for edge in tree.edges:
+    a, b = edge
+    a = a.split("-")[1]
+    b = b.split("-")[1]
+    print(a, b)
+    actuator += actuator_template % ((a+"-"+b),(a+"-"+b))
 
 
-header = """<mujoco model="tetrahedron">
+
+
+
+
+
+header = """<mujoco model="%s">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
-  <option gravity="0 0 -9.81" timestep="0.002" />
+  <option gravity="0 0 -9.81" timestep="0.0002" />
 
   <option cone="elliptic" impratio="10"/>
 
@@ -630,7 +676,7 @@ header = """<mujoco model="tetrahedron">
   <freejoint/>
 """
 
-final_XML = header +final_member + "</body> </worldbody>"+ "<equality>"+ equality + "</equality>"+ "</mujoco>"
+final_XML = header %(model_name) +final_member + "</body> </worldbody>"+ " <equality> "+ equality + "</equality>"+ "<actuator> \n"+ actuator+"</actuator>\n"+"</mujoco>"
 print(final_XML)
 
 
