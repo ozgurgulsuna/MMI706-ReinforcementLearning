@@ -13,12 +13,12 @@ from mpl_toolkits.mplot3d import Axes3D
 # Select topology
 # minimum is a triangle
 model_name = "octahedron"  # "tetrahedron"
-connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
+# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1.5-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [2, 5], [2, 6], [3, 4], [4, 5], [4, 6]]) # 3.5-tetrahedron
@@ -97,7 +97,7 @@ def equations(coords):
     D = np.dot(C, P)
 
     residuals = [
-        ((np.linalg.norm(D[i]) - L[i])+0.0/(np.sum(np.abs(coords)))) for i in range(M)
+        ((np.linalg.norm(D[i]) - L[i])+0.3/(np.sum(np.abs(coords)))) for i in range(M)
     ]
     
     # Adding the penalty as additional residuals
@@ -189,7 +189,7 @@ member_template = """
     <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.45" material="metal" contype="1"/>
     <body name="[%s-1]" pos="%f %f %f" >
         <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
-        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="0 0.95"/>
+        <joint name="Linear-%s" type="slide" axis="%f %f %f" range="%f %f"/>
         %s
     </body>
     </body>
@@ -351,7 +351,8 @@ for edge in tree.edges:
         passives = passive_template % (edge[1], Passives[0], Passives[1], Passives[2])
 
 
-    members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2], "%s")
+
+    members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2],0,0 ,  "%s")
 # print(members)
 print(members[1])
 print(members[2])
@@ -438,6 +439,9 @@ def generate_member(node):
     else:
         passives = passive_template % (node, Passives[0], Passives[1], Passives[2])
 
+    range_start = (1-np.linalg.norm(P[a] - P[b]))
+    range_end = range_start +0.95
+
 
 #     correct = [0,0,0]
 #     prev = list(tree.predecessors(node))
@@ -465,7 +469,7 @@ def generate_member(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2],range_start, range_end ,  "%s")
 
 def generate_member2(node):
     correct = [0,0,0]
@@ -524,7 +528,8 @@ def generate_member2(node):
     else:
         passives = passive_template % (node, Passives[0], Passives[1], Passives[2])
 
-
+    range_start = (1-np.linalg.norm(P[a] - P[b]))
+    range_end = range_start +0.95
 #     correct = [0,0,0]
 #     prev = list(tree.predecessors(node))
 #     print("prev")
@@ -551,7 +556,7 @@ def generate_member2(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2],range_start, range_end ,  "")
    
 
 # Traverse the tree and combine members
@@ -621,7 +626,7 @@ def find_node(tree, leaf):
 # Anchor is calculated with respect to the body1
 
 def calculate_anchor(P1, P2):
-    return -(P1-P2)/np.linalg.norm(P1-P2)*0.5
+    return -(P1-P2)/np.linalg.norm(P1-P2)*(np.linalg.norm(P1 - P2)-0.5)
 
 equality = ""
 l = 0
@@ -645,7 +650,7 @@ print(p)
 
 # create actuators from members
 actuator_template = """
-<position name="Member-%s" joint="Linear-%s" kp="18000"  kv="10000" ctrlrange="0 1" />"""
+<intvelocity name="Member-%s" joint="Linear-%s" kp="18000"  kv="10000" inheritrange="1" />"""
 
 actuator = ""
 
