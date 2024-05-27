@@ -15,12 +15,14 @@ from mpl_toolkits.mplot3d import Axes3D
 model_name = "octahedron"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1.5-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [2, 5], [2, 6], [3, 4], [4, 5], [4, 6]]) # 3.5-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5],[0,6], [1,2], [1, 3], [1, 5], [2, 3], [2, 4],[2,6], [3, 4], [3, 5], [4, 5],[4,6],[5,6], ]) # 4-octahedron
 
 # needs to be ordered such that each node number is connected to the next number in line (1 should have a connection with 2)
 # otherwise the tree will not be created correctly
@@ -95,14 +97,13 @@ def equations(coords):
     D = np.dot(C, P)
 
     residuals = [
-        (np.linalg.norm(D[i]) - L[i]) for i in range(M)
+        ((np.linalg.norm(D[i]) - L[i])+0.0/(np.sum(np.abs(coords)))) for i in range(M)
     ]
     
     # Adding the penalty as additional residuals
-    penalty = 0.01 * np.abs(coords)  # Scale the penalty appropriately
+    # penalty = 0.1 / (1+np.abs(coords))# Scale the penalty appropriately
     
-    return residuals + penalty.tolist()
-
+    return residuals
 
 # Define bounds for each coordinate
 A_lower = [0, 0, 0]
@@ -659,7 +660,7 @@ for edge in tree.edges:
 
 header = """<mujoco model="%s">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
-  <option gravity="0 0 -9.81" timestep="0.0002" />
+  <option gravity="0 0 -9.81" timestep="0.002" integrator="implicit"/>
 
   <option cone="elliptic" impratio="10"/>
 
