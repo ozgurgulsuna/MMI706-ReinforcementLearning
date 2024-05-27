@@ -13,7 +13,7 @@ from mpl_toolkits.mplot3d import Axes3D
 # Select topology
 # minimum is a triangle
 model_name = "octahedron"  # "tetrahedron"
-# connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
+connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1.5-tetrahedron
@@ -21,7 +21,7 @@ model_name = "octahedron"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [2, 5], [2, 6], [3, 4], [4, 5], [4, 6]]) # 3.5-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [2, 5], [2, 6], [3, 4], [4, 5], [4, 6]]) # 3.5-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5],[0,6], [1,2], [1, 3], [1, 5], [2, 3], [2, 4],[2,6], [3, 4], [3, 5], [4, 5],[4,6],[5,6], ]) # 4-octahedron
 
 # needs to be ordered such that each node number is connected to the next number in line (1 should have a connection with 2)
@@ -70,8 +70,8 @@ plt.show()
 
 
 # Member lengths
-# L = np.random.rand(M) + 1
-L = np.array([1 for i in range(1, M+1)])
+L = np.random.rand(M) + 1
+# L = np.array([1 for i in range(1, M+1)])
 print(L)
 
 C = np.zeros((M, N))
@@ -408,8 +408,11 @@ def generate_member(node):
     # print("Normal: ", normal_dir(unit_dir, axis))
     L_dir = rotate_vector(unit_dir, normal_dir(unit_dir, axis), np.pi)
 
+    length = np.linalg.norm(P[b] - P[a])
+
     P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    L_offset2 = (P[a] - P[b])/(np.linalg.norm(P[a] - P[b]))*(1-np.linalg.norm(P[a] - P[b]))
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
@@ -462,7 +465,7 @@ def generate_member(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "%s")
 
 def generate_member2(node):
     correct = [0,0,0]
@@ -490,6 +493,7 @@ def generate_member2(node):
 
     P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
+    L_offset2 = (P[a] - P[b])/(np.linalg.norm(P[a] - P[b]))*(1-np.linalg.norm(P[a] - P[b]))
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
@@ -547,7 +551,7 @@ def generate_member2(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
    
 
 # Traverse the tree and combine members
