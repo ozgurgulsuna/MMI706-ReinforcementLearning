@@ -12,9 +12,15 @@ model_name = "triangle"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # tetrahedron
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # tetrahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1.5-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # Octahedron
+
+# needs to be ordered such that each node number is connected to the next number in line (1 should have a connection with 2)
+# otherwise the tree will not be created correctly
+
 
 N = np.max(connectivity) + 1
 M = len(connectivity)
@@ -25,7 +31,7 @@ G.add_edges_from(connectivity)
 
 pos = nx.spring_layout(G)  # positions for all nodes
 nx.draw(G, pos, with_labels=True, node_size=700)
-# plt.show()
+plt.show()
 
 # Create a tree ########################################################################################
 tree = nx.DiGraph()
@@ -52,7 +58,7 @@ tree = tree.reverse()
 # Draw the tree
 pos = nx.spring_layout(tree)  # positions for all nodes
 nx.draw(tree, pos, with_labels=True, node_size=700)
-# plt.show()
+plt.show()
 
 ###########################################################################################################################
 
@@ -564,9 +570,11 @@ print(leaves)
 def find_all_possible_connections(tree, node):
     connections = []
     for nodes in tree.nodes():
-        if nodes.split("-")[0] == node.split("-")[1] and nodes != node:
+        if nodes.split("-")[1] == node.split("-")[1] and nodes != node:
             connections.append(nodes)
     return connections
+print("start")
+print(find_all_possible_connections(tree, "2-3"))
 
 short_list = []
 
@@ -588,9 +596,18 @@ l = 0
 #     l += 1
 
 for leaf in leaves:
-    for nodes in find_all_possible_connections(tree, leaffo[int(leaf[0])]):
-        equality += equality_template % (l, leaffo[l], nodes, calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[0], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[1], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[2])
+    print("star")
+    print(leaf)
+    print(leaffo[l])
+    p = 0
+    for nodes in find_all_possible_connections(tree, leaffo[l]):
+        print("nodes")
+        print(nodes)
+        equality += equality_template % ( ("%s-%s"%(l,p)), leaffo[l], nodes, calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[0], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[1], calculate_anchor(P[int(leaf[0])],P[int(leaf[1])])[2])
+        p += 1
     l += 1
+print(l)
+print(p)
 
 
 
@@ -609,9 +626,11 @@ header = """<mujoco model="tetrahedron">
   </asset>
 
   <worldbody>
+  <body name="ground" pos="0 0 0">
+  <freejoint/>
 """
 
-final_XML = header +final_member + "  </worldbody>"+ "<equality>"+ equality + "</equality>"+ "</mujoco>"
+final_XML = header +final_member + "</body> </worldbody>"+ "<equality>"+ equality + "</equality>"+ "</mujoco>"
 print(final_XML)
 
 
