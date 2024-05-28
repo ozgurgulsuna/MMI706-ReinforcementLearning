@@ -16,11 +16,12 @@ from hierarcy_pos import hierarchy_pos
 model_name = "octahedron"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # 1-tet
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # 1-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1-tet-1
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 5], [1, 2], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5]]) # 2-tet-1
 # connectivity = np.array([[0, 1], [0, 2], [0, 5], [1, 2], [1, 3], [1, 4], [2, 3], [2, 5], [3, 4], [4, 5]]) # cupola
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4],[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 3.5-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 3-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
@@ -41,7 +42,7 @@ M = len(connectivity)
 G = nx.Graph()
 G.add_edges_from(connectivity)
 
-pos = nx.spring_layout(G)  # positions for all nodes
+pos = nx.spring_layout(G)
 nx.draw(G, pos, with_labels=True, node_size=700,node_color=(0.9,0.2,0.2), font_size=15, font_color='white', arrows=True, width=1.4)
 plt.show()
 

@@ -1,0 +1,147 @@
+<mujoco model="2-tet-E">
+  <compiler angle="radian" meshdir="assets" autolimits="true"/>
+  <option gravity="0 0 -9.81" timestep="0.002" integrator="implicit"/>
+
+  <option cone="elliptic" impratio="10"/>
+
+  <asset>
+    <material name="metal" rgba="0.58 0.58 0.58 1"/>
+    <material name="gray" rgba="0.4627 0.4627 0.4627 1"/>
+    <material name="red" rgba="0.9 0.1 0.1 1"/>
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
+  </asset>
+
+  <worldbody>
+  <body name="ground" pos="0 0 0">
+  <freejoint/>
+
+    <body name="[0-1-0]" pos="0.000000 0.000000 0.000000" >
+
+    <geom type="cylinder" pos="0.365613 0.341068 0.000000" axisangle="-0.682135 0.731226 0.000000 1.570796" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[0-1-1]" pos="0.365613 0.341068 0.000000" >
+        <geom type="cylinder" pos="0.066291 0.061841 0.000000" axisangle="-0.682135 0.731226 0.000000 1.570796" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-0-1" type="slide" axis="0.731226 0.682135 0.000000" range="-0.090658 0.859342"/>
+
+    <body name="[1-2-0]" pos="0.431904 0.402909 0.000000" >
+    <joint name="Passive1-2" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="-0.418004 0.274358 0.000000" axisangle="-0.548716 -0.836009 0.000000 1.570796" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[1-2-1]" pos="-0.418004 0.274358 0.000000" >
+        <geom type="cylinder" pos="-0.077116 0.050615 0.000000" axisangle="-0.548716 -0.836009 0.000000 1.570796" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-1-2" type="slide" axis="-0.836009 0.548716 0.000000" range="-0.092243 0.857757"/>
+
+    <body name="[2-3-0]" pos="-0.495120 0.324973 0.000000" >
+    <joint name="Passive2-3" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="-0.204213 -0.327908 0.317448" axisangle="0.655816 -0.408427 0.000000 0.882923" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[2-3-1]" pos="-0.204213 -0.327908 0.317448" >
+        <geom type="cylinder" pos="-0.037675 -0.060495 0.058565" axisangle="0.655816 -0.408427 0.000000 0.882923" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-2-3" type="slide" axis="-0.408427 -0.655816 0.634896" range="-0.092244 0.857756"/>
+
+    <body name="[3-4-0]" pos="-0.241888 -0.388403 0.376013" >
+    <joint name="Passive3-4" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="0.472186 0.040679 0.159330" axisangle="-0.081358 0.944371 0.000000 1.246482" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[3-4-1]" pos="0.472186 0.040679 0.159330" >
+        <geom type="cylinder" pos="0.087099 0.007504 0.029390" axisangle="-0.081358 0.944371 0.000000 1.246482" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-3-4" type="slide" axis="0.944371 0.081358 0.318659" range="-0.092229 0.857771"/>
+
+    </body>
+    </body>
+
+    </body>
+    </body>
+
+    <body name="[2-4-0]" pos="-0.495120 0.324973 0.000000" >
+    <joint name="Passive2-4" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="0.216887 -0.232479 0.385893" axisangle="0.464957 0.433774 -0.000000 0.689150" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[2-4-1]" pos="0.216887 -0.232479 0.385893" >
+        <geom type="cylinder" pos="0.151595 -0.162492 0.269723" axisangle="0.464957 0.433774 -0.000000 0.689150" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-2-4" type="slide" axis="0.433774 -0.464957 0.771787" range="-0.349478 0.600522"/>
+
+    </body>
+    </body>
+
+    </body>
+    </body>
+
+    <body name="[1-3-0]" pos="0.431904 0.402909 0.000000" >
+    <joint name="Passive1-3" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="-0.444081 -0.038219 0.226565" axisangle="0.076438 -0.888162 0.000000 1.100524" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[1-3-1]" pos="-0.444081 -0.038219 0.226565" >
+        <geom type="cylinder" pos="-0.471064 -0.040542 0.240331" axisangle="0.076438 -0.888162 0.000000 1.100524" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-1-3" type="slide" axis="-0.888162 -0.076438 0.453129" range="-0.530381 0.419619"/>
+
+    </body>
+    </body>
+
+    <body name="[1-4-0]" pos="0.431904 0.402909 0.000000" >
+    <joint name="Passive1-4" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="-0.150040 -0.012872 0.476783" axisangle="0.025744 -0.300081 0.000000 0.305933" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[1-4-1]" pos="-0.150040 -0.012872 0.476783" >
+        <geom type="cylinder" pos="-0.027675 -0.002374 0.087943" axisangle="0.025744 -0.300081 0.000000 0.305933" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-1-4" type="slide" axis="-0.300081 -0.025744 0.953566" range="-0.092226 0.857774"/>
+
+    </body>
+    </body>
+
+    </body>
+    </body>
+
+    <body name="[0-2-0]" pos="0.000000 0.000000 0.000000" >
+    <joint name="Passive0-2" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="-0.042872 0.498159 0.000000" axisangle="-0.996317 -0.085744 0.000000 1.570796" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[0-2-1]" pos="-0.042872 0.498159 0.000000" >
+        <geom type="cylinder" pos="-0.029862 0.346991 0.000000" axisangle="-0.996317 -0.085744 0.000000 1.570796" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-0-2" type="slide" axis="-0.085744 0.996317 0.000000" range="-0.348273 0.601727"/>
+
+    </body>
+    </body>
+
+    <body name="[0-3-0]" pos="0.000000 0.000000 0.000000" >
+    <joint name="Passive0-3" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="-0.257510 0.287440 0.317910" axisangle="-0.574881 -0.515019 0.000000 0.881726" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[0-3-1]" pos="-0.257510 0.287440 0.317910" >
+        <geom type="cylinder" pos="-0.046689 0.052116 0.057640" axisangle="-0.574881 -0.515019 0.000000 0.881726" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-0-3" type="slide" axis="-0.515019 0.574881 0.635820" range="-0.090655 0.859345"/>
+
+    </body>
+    </body>
+
+    <body name="[0-4-0]" pos="0.000000 0.000000 0.000000" >
+    <joint name="Passive0-4" type="ball" pos="0.000000 0.000000 0.000000" axis="0 1 0" damping=".9"/>
+    <geom type="cylinder" pos="0.174207 0.265470 0.386235" axisangle="-0.530940 0.348414 0.000000 0.688074" size="0.025 0.45" material="metal" contype="1"/>
+    <body name="[0-4-1]" pos="0.174207 0.265470 0.386235" >
+        <geom type="cylinder" pos="0.121347 0.184918 0.269039" axisangle="-0.530940 0.348414 0.000000 0.688074" size="0.02 0.5" material="gray" contype="1"/>
+        <joint name="Linear-0-4" type="slide" axis="0.348414 0.530940 0.772470" range="-0.348285 0.601715"/>
+
+    </body>
+    </body>
+    </body> </worldbody> <equality>
+<connect name="kinematic_link_0-0" active="true" body1="[0-2-1]" body2="[1-2-1]" anchor=" -0.072735 0.845149 0.000000" />
+<connect name="kinematic_link_1-0" active="true" body1="[0-3-1]" body2="[1-3-1]" anchor=" -0.304199 0.339556 0.375551" />
+<connect name="kinematic_link_1-1" active="true" body1="[0-3-1]" body2="[2-3-1]" anchor=" -0.304199 0.339556 0.375551" />
+<connect name="kinematic_link_2-0" active="true" body1="[0-4-1]" body2="[1-4-1]" anchor=" 0.295554 0.450388 0.655275" />
+<connect name="kinematic_link_2-1" active="true" body1="[0-4-1]" body2="[2-4-1]" anchor=" 0.295554 0.450388 0.655275" />
+<connect name="kinematic_link_2-2" active="true" body1="[0-4-1]" body2="[3-4-1]" anchor=" 0.295554 0.450388 0.655275" />
+<connect name="kinematic_link_3-0" active="true" body1="[1-3-1]" body2="[0-3-1]" anchor=" -0.915145 -0.078761 0.466896" />
+<connect name="kinematic_link_3-1" active="true" body1="[1-3-1]" body2="[2-3-1]" anchor=" -0.915145 -0.078761 0.466896" />
+<connect name="kinematic_link_4-0" active="true" body1="[1-4-1]" body2="[0-4-1]" anchor=" -0.177716 -0.015246 0.564727" />
+<connect name="kinematic_link_4-1" active="true" body1="[1-4-1]" body2="[2-4-1]" anchor=" -0.177716 -0.015246 0.564727" />
+<connect name="kinematic_link_4-2" active="true" body1="[1-4-1]" body2="[3-4-1]" anchor=" -0.177716 -0.015246 0.564727" />
+<connect name="kinematic_link_5-0" active="true" body1="[2-4-1]" body2="[0-4-1]" anchor=" 0.368481 -0.394971 0.655616" />
+<connect name="kinematic_link_5-1" active="true" body1="[2-4-1]" body2="[1-4-1]" anchor=" 0.368481 -0.394971 0.655616" />
+<connect name="kinematic_link_5-2" active="true" body1="[2-4-1]" body2="[3-4-1]" anchor=" 0.368481 -0.394971 0.655616" />
+<connect name="kinematic_link_6-0" active="true" body1="[3-4-1]" body2="[0-4-1]" anchor=" 0.559284 0.048183 0.188719" />
+<connect name="kinematic_link_6-1" active="true" body1="[3-4-1]" body2="[1-4-1]" anchor=" 0.559284 0.048183 0.188719" />
+<connect name="kinematic_link_6-2" active="true" body1="[3-4-1]" body2="[2-4-1]" anchor=" 0.559284 0.048183 0.188719" /></equality><actuator>
+
+<intvelocity name="Member-1-2" joint="Linear-1-2" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-1-3" joint="Linear-1-3" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-1-4" joint="Linear-1-4" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-0-1" joint="Linear-0-1" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-0-2" joint="Linear-0-2" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-0-3" joint="Linear-0-3" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-0-4" joint="Linear-0-4" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-2-3" joint="Linear-2-3" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-2-4" joint="Linear-2-4" kp="18000"  kv="10000" inheritrange="1" />
+<intvelocity name="Member-3-4" joint="Linear-3-4" kp="18000"  kv="10000" inheritrange="1" /></actuator>
+</mujoco>
