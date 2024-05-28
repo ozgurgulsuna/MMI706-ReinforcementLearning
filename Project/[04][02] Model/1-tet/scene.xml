@@ -1,5 +1,5 @@
 <mujoco model="tetrahedron scene">
-  <include file="tetrahedron.xml"/>
+  <include file="1-tet.xml"/>
 
   <statistic center="0 0 0.8" extent="2"/>
 

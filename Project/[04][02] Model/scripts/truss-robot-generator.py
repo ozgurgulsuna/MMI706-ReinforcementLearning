@@ -9,20 +9,26 @@ import networkx as nx
 from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from hierarcy_pos import hierarchy_pos
 
 # Select topology
 # minimum is a triangle
 model_name = "octahedron"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1.5-tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tetrahedron
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 2-tetrahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tetrahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # 1-tet
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4]]) # 1-tet-1
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tet
+# connectivity = np.array([[0, 1], [0, 2], [0, 5], [1, 2], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5]]) # 2-tet-1
+# connectivity = np.array([[0, 1], [0, 2], [0, 5], [1, 2], [1, 3], [1, 4], [2, 3], [2, 5], [3, 4], [4, 5]]) # cupola
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 3-tet
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
-# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [2, 5], [2, 6], [3, 4], [4, 5], [4, 6]]) # 3.5-tetrahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5],[0,6], [1,2], [1, 3], [1, 5], [2, 3], [2, 4],[2,6], [3, 4], [3, 5], [4, 5],[4,6],[5,6], ]) # 4-octahedron
+
+
+# connectivity = np.array([[0, 1], [0, 3], [0, 7], [1, 2], [1, 6], [2, 3], [2, 5], [3, 4], [4, 5], [4, 7], [5, 6], [6, 7]]) # cube
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 6], [2, 3], [2, 5], [2, 6], [3, 4], [4, 5], [4, 6]]) # 3.5-tetrahedron
 
 # needs to be ordered such that each node number is connected to the next number in line (1 should have a connection with 2)
 # otherwise the tree will not be created correctly
@@ -36,7 +42,7 @@ G = nx.Graph()
 G.add_edges_from(connectivity)
 
 pos = nx.spring_layout(G)  # positions for all nodes
-nx.draw(G, pos, with_labels=True, node_size=700)
+nx.draw(G, pos, with_labels=True, node_size=700,node_color=(0.9,0.2,0.2), font_size=15, font_color='white', arrows=True, width=1.4)
 plt.show()
 
 # Create a tree ########################################################################################
@@ -47,6 +53,21 @@ first_elements = connectivity[:, 0]
 
 # Find the maximum value in the first column
 depth = np.max(first_elements)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Add the first level of nodes
 for i in range(0, depth+1):
@@ -61,17 +82,61 @@ for i in range(0, depth+1):
 # reverse directions
 tree = tree.reverse()
 
+# # Use pydot for better hierarchical layout
+# # pos = nx.nx_pydot.graphviz_layout(tree, prog='dot')  # Requires pydot
+
+# # Draw the tree
+# # pos = nx.spring_layout(tree)  # positions for all nodes
+# def hierarchy_pos(G, root=None, width=1., vert_gap=0.2, vert_loc=0, xcenter=0.5):
+#     """
+#     If there is a cycle that is reachable from root, then this will see infinite recursion.
+#     G: the graph (must be a tree)
+#     root: the root node of the current branch
+#     width: horizontal space allocated for this branch - avoids overlap with other branches
+#     vert_gap: vertical gap between levels of hierarchy
+#     vert_loc: vertical location of the root node
+#     xcenter: horizontal location of the root node
+#     """
+
+#     def _hierarchy_pos(G, root, width=1., vert_gap=0.2, vert_loc=0, xcenter=0.5, pos=None, parent=None, parsed=[]):
+#         if pos is None:
+#             pos = {root: (xcenter, vert_loc)}
+#         else:
+#             pos[root] = (xcenter, vert_loc)
+#         parsed.append(root)
+#         neighbors = list(G.neighbors(root))
+#         if not isinstance(G, nx.DiGraph) and parent is not None:
+#             neighbors.remove(parent)  # avoid revisiting the parent node in undirected graphs
+#         if len(neighbors) != 0:
+#             dx = width / len(neighbors)  # space allocated for each subtree
+#             nextx = xcenter - width / 2 - dx / 2
+#             for neighbor in neighbors:
+#                 nextx += dx
+#                 pos = _hierarchy_pos(G, neighbor, width=dx, vert_gap=vert_gap, vert_loc=vert_loc-vert_gap, xcenter=nextx, pos=pos, parent=root, parsed=parsed)
+#         return pos
+
+#     return _hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)
+
+
+# # Get the hierarchical position of nodes
+# pos = hierarchy_pos(tree, root="0-0")
+
+# nx.draw(tree, pos, with_labels=True, node_size=600, node_color='red', font_size=11, font_color='white', arrows=True, width=2, font_weight='bold')
 # Draw the tree
-pos = nx.spring_layout(tree)  # positions for all nodes
-nx.draw(tree, pos, with_labels=True, node_size=700)
+pos = hierarchy_pos(tree, root="0-0", width = 2*math.pi, xcenter=0)
+new_pos = {u:(r*math.cos(theta),r*math.sin(theta)) for u, (theta, r) in pos.items()}
+# nx.draw(G, pos=new_pos, node_size = 50)
+
+# pos = nx.spring_layout(tree)  # positions for all nodes
+nx.draw(tree, new_pos, with_labels=True, node_size=700, node_color=(0.9,0.2,0.2), font_size=13, font_color='white', arrows=True, width=1.4)
 plt.show()
 
 ###########################################################################################################################
 
 
 # Member lengths
-L = np.random.rand(M) + 1
-# L = np.array([1 for i in range(1, M+1)])
+# L = np.random.rand(M) + 1
+L = np.array([1.25 for i in range(1, M+1)])
 print(L)
 
 C = np.zeros((M, N))
@@ -97,7 +162,7 @@ def equations(coords):
     D = np.dot(C, P)
 
     residuals = [
-        ((np.linalg.norm(D[i]) - L[i])+0.3/(np.sum(np.abs(coords)))) for i in range(M)
+        ((np.linalg.norm(D[i]) - L[i])+0.1/(np.sum(np.abs(coords)*np.abs(coords)))) for i in range(M)
     ]
     
     # Adding the penalty as additional residuals
@@ -113,7 +178,7 @@ B_upper = [np.inf, np.inf, 1e-9]
 C_lower = [-np.inf, -np.inf, 0.0]
 C_upper = [np.inf, np.inf, 1e-9]
 
-lower_bounds = A_lower + B_lower + C_lower + [-np.inf, -np.inf, 0.0]* (N - 3)
+lower_bounds = A_lower + B_lower + C_lower + [-np.inf, -np.inf, 0]* (N - 3)
 upper_bounds = A_upper + B_upper + C_upper + [np.inf, np.inf, np.inf]* (N - 3)
 # print(lower_bounds)
 # print(upper_bounds)
