@@ -1,15 +1,15 @@
 from stable_baselines3.common.env_checker import check_env
 from tetrahedron_locomotion_env import TetrahedronLocomotionEnv
-from env import TetrahedronLocomotionEnv2
+from env import Env1TET, Env2TET
 from stable_baselines3 import SAC
 import random
 
 
 # initialize your enviroment
-env = TetrahedronLocomotionEnv(render_mode="human")
-env2 = TetrahedronLocomotionEnv2(render_mode="human")
+env1= Env1TET(render_mode="human")
+env2 = Env2TET(render_mode="human")
 
-env_list =[env , env2, env ,env2]
+env_list =[env1 , env2, env1 ,env2]
 # it will check your custom environment and output additional warnings if needed
 #check_env(env)
 #check_env(env2)
