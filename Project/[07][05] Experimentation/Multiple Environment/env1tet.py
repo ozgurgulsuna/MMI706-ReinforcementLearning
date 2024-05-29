@@ -162,7 +162,7 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         terminate_when_unhealthy: bool = True,
         healthy_z_range: Tuple[float, float] = (0.0, 5.0), # only in planar surface
         reset_noise_scale: float = 0.1,
-        episode_horizon: int = 100,
+        episode_horizon: int = 400,
         step_number: int = 0,
         **kwargs,
     ):
@@ -243,13 +243,13 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         return self.is_healthy * self._healthy_reward
     
     def control_cost(self,action):
-        print(action)
+        #print(action)
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
         if math.isnan(control_cost):
-            print("NAN")
+            #print("NAN")
             control_cost = 0
         elif str(type(control_cost)) != "<class 'numpy.float64'>":
-            print("NOT NUMERIC")
+            #print("NOT NUMERIC")
             control_cost = 0
         return control_cost
 
@@ -260,8 +260,8 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         CoM_pos = self.data.subtree_com[0].copy()
         min_z, max_z = self._healthy_z_range
         is_healthy = np.isfinite(state).all() and min_z <= CoM_pos[2] <= max_z
-        #print("state",state)
-        #print("is healthy",is_healthy)
+        ##print("state",state)
+        ##print("is healthy",is_healthy)
         return is_healthy  
     
     def step(self, action):
@@ -269,7 +269,7 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         position_before = self.data.subtree_com[0].copy()
         self.do_simulation(action, self.frame_skip)
         self._step_number +=1
-        print("step",self._step_number)
+        #print("step",self._step_number)
         
         position_after = self.data.subtree_com[0].copy()
 
@@ -280,8 +280,8 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         reward, reward_info = self._get_reward(x_velocity, action)
         terminated = (not self.is_healthy) and self._terminate_when_unhealthy
         truncated = self._step_number > self._episode_horizon
-        print("truncated",truncated)
-        print("terminated",terminated)
+        #print("truncated",truncated)
+        #print("terminated",terminated)
 
         # info is incorrect
         info = {
@@ -311,12 +311,12 @@ class Env1TET(MujocoEnv, utils.EzPickle):
 
         reward = total_reward - total_cost
         
-        print("forward_reward", forward_reward)
-        print("healthy_reward", healthy_reward)
-        print("total_reward", total_reward)
-        print("ctrl_cost", ctrl_cost)
-        print("total_cost", total_cost)
-        print("reward", reward)
+        #print("forward_reward", forward_reward)
+        #print("healthy_reward", healthy_reward)
+        #print("total_reward", total_reward)
+        #print("ctrl_cost", ctrl_cost)
+        #print("total_cost", total_cost)
+        #print("reward", reward)
         
         
         reward_info = {
@@ -344,10 +344,10 @@ class Env1TET(MujocoEnv, utils.EzPickle):
                                          np.array(np.zeros(3)),
                                          np.array(np.zeros(3))),axis=0)
         
-        print("position",position)
-        print("velocity",velocity)
-        print("member_lengths",member_lengths)
-        print("node_pos",node_positions)
+        #print("position",position)
+        #print("velocity",velocity)
+        #print("member_lengths",member_lengths)
+        #print("node_pos",node_positions)
         
         #return position
         return np.concatenate((position, velocity, member_lengths, node_positions), axis=0)

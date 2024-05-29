@@ -1,10 +1,11 @@
-from stable_baselines3 import SAC
+from stable_baselines3 import PPO  # Import the PPO class
 from env2tet import Env2TET
+from env1tet import Env1TET
 import cv2
 import imageio
 
 env = Env2TET(render_mode="human")
-model = SAC.load("aa.zip")
+model = PPO.load("ppo_truss_locomotion")
 
 obs, info = env.reset()
 frames = []
