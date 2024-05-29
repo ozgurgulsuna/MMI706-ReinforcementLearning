@@ -155,14 +155,14 @@ class Env2TET(MujocoEnv, utils.EzPickle):
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 10,
-        ctrl_cost_weight: float = 0.0000,
-        healthy_reward: float = 1.0,
+        ctrl_cost_weight: float = 0.0001,
+        healthy_reward: float = 0.01,
         main_body: Union[int, str] = 1,
         size_cost_weight: float = 0.0001,
         terminate_when_unhealthy: bool = True,
         healthy_z_range: Tuple[float, float] = (0.0, 5.0), # only in planar surface
         reset_noise_scale: float = 0.1,
-        episode_horizon: int = 400,
+        episode_horizon: int = 800,
         step_number: int = 0,
         **kwargs,
     ):

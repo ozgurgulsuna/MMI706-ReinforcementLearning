@@ -5,11 +5,11 @@ import cv2
 import imageio
 
 env = Env2TET(render_mode="human")
-model = PPO.load("ppo_truss_locomotion")
+model = PPO.load("ppo_truss_locomotion_2")
 
 obs, info = env.reset()
 frames = []
-for _ in range(750):
+for _ in range(4000):
     action, _states = model.predict(obs, deterministic=True)
     obs, reward, done, truncated, info = env.step(action)
     image = env.render()
