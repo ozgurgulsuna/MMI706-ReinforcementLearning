@@ -5,6 +5,7 @@ __version__ = "1.0.1"
 from typing import Dict, Tuple, Union
 
 import numpy as np
+import math
 
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
@@ -161,7 +162,7 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         terminate_when_unhealthy: bool = True,
         healthy_z_range: Tuple[float, float] = (0.0, 5.0), # only in planar surface
         reset_noise_scale: float = 0.1,
-        episode_horizon: int = 500,
+        episode_horizon: int = 100,
         step_number: int = 0,
         **kwargs,
     ):
@@ -198,11 +199,18 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         self._episode_horizon = episode_horizon
         self._step_number = step_number
 
+        observation_space = Box(
+            low=-np.inf,
+            high=np.inf,
+            shape=(3+3+15+18,),
+            dtype=np.float64,
+        )
+        
         MujocoEnv.__init__(
             self,
             xml_file,
             frame_skip,
-            observation_space=None, # observation space is defined in the reset function
+            observation_space=observation_space, # observation space is defined in the reset function
             default_camera_config=default_camera_config,
             **kwargs,
         )
@@ -235,7 +243,14 @@ class Env1TET(MujocoEnv, utils.EzPickle):
         return self.is_healthy * self._healthy_reward
     
     def control_cost(self,action):
+        print(action)
         control_cost = self._ctrl_cost_weight * np.sum(np.square(action))
+        if math.isnan(control_cost):
+            print("NAN")
+            control_cost = 0
+        elif str(type(control_cost)) != "<class 'numpy.float64'>":
+            print("NOT NUMERIC")
+            control_cost = 0
         return control_cost
 
     @property
@@ -296,12 +311,12 @@ class Env1TET(MujocoEnv, utils.EzPickle):
 
         reward = total_reward - total_cost
         
-        #print("forward_reward", forward_reward)
-        #print("healthy_reward", healthy_reward)
-        #print("total_reward", total_reward)
-        #print("ctrl_cost", ctrl_cost)
-        #print("total_cost", total_cost)
-        #print("reward", reward)
+        print("forward_reward", forward_reward)
+        print("healthy_reward", healthy_reward)
+        print("total_reward", total_reward)
+        print("ctrl_cost", ctrl_cost)
+        print("total_cost", total_cost)
+        print("reward", reward)
         
         
         reward_info = {
@@ -309,6 +324,7 @@ class Env1TET(MujocoEnv, utils.EzPickle):
             "healthy_reward": healthy_reward,
             "ctrl_cost": -ctrl_cost,
         }
+        
 
         return reward, reward_info
     
@@ -319,13 +335,14 @@ class Env1TET(MujocoEnv, utils.EzPickle):
 
         # initiate node positions with zeros
 
-        node_positions = np.zeros((6, 3))
+        # node_positions = np.zeros(18)
 
-        for i in range(6):
-            if np.isnan(self.data.geom("("+i+")").xpos[:1]).any():
-                node_positions[i] = self.data.geom("("+i+")").xpos[:3]
-            else:
-                node_positions[i] = np.zeros(3)
+        node_positions = np.concatenate((np.array(self.data.geom("(0)").xpos[:3]),   # not sure if .xpos is correct
+                                         np.array(self.data.geom("(1)").xpos[:3]),
+                                         np.array(self.data.geom("(2)").xpos[:3]),
+                                         np.array(self.data.geom("(3)").xpos[:3]),
+                                         np.array(np.zeros(3)),
+                                         np.array(np.zeros(3))),axis=0)
         
         print("position",position)
         print("velocity",velocity)

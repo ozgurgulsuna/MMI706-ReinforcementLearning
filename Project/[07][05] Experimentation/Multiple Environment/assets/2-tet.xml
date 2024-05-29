@@ -136,20 +136,20 @@
 <connect name="kinematic_link_5-0" active="true" body1="[3-4-1]" body2="[1-4-1]" anchor=" 0.399538 0.587662 -0.200993" />
 <connect name="kinematic_link_5-1" active="true" body1="[3-4-1]" body2="[2-4-1]" anchor=" 0.399538 0.587662 -0.200993" /></equality><actuator>
 
-<intvelocity name="Member-0-1" joint="Linear-0-1" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-0-2" joint="Linear-0-2" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-0-3" joint="Linear-0-3" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-0-4" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
-<intvelocity name="Member-0-5" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
-<intvelocity name="Member-1-2" joint="Linear-1-2" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-1-3" joint="Linear-1-3" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-1-4" joint="Linear-1-4" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-1-5" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
-<intvelocity name="Member-2-3" joint="Linear-2-3" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-2-4" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
-<intvelocity name="Member-2-5" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
-<intvelocity name="Member-3-4" joint="Linear-3-4" kp="18000"  kv="10000" inheritrange="1" />
-<intvelocity name="Member-3-5" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
-<intvelocity name="Member-4-5" joint="Linear-0-1" kp="1"  kv="1" inheritrange="1" />
+<motor name="Member-0-1" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-0-2" joint="Linear-0-2"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-0-3" joint="Linear-0-3"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-0-4" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
+<motor name="Member-0-5" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
+<motor name="Member-1-2" joint="Linear-1-2"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-1-3" joint="Linear-1-3"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-1-4" joint="Linear-1-4"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-1-5" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
+<motor name="Member-2-3" joint="Linear-2-3"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-2-4" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
+<motor name="Member-2-5" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
+<motor name="Member-3-4" joint="Linear-3-4"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="500" />
+<motor name="Member-3-5" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
+<motor name="Member-4-5" joint="Linear-0-1"  ctrllimited="true" ctrlrange="-1.0 1.0" gear="1" />
 </actuator>
 </mujoco>

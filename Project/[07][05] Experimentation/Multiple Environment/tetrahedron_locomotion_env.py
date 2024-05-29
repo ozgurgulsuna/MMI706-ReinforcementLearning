@@ -1,6 +1,6 @@
 __credits__ = ["Gulsuna-Ozgur"]
 __license__ = "GPL"
-__version__ = "1.0.1"
+__version__ = "1.0.0"
 
 from typing import Dict, Tuple, Union
 
@@ -19,11 +19,11 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 # This is the class that defines the MuJoCo environment, it can be modified with the directions in the comments.
-class Env2TET(MujocoEnv, utils.EzPickle):
+class TetrahedronLocomotionEnv(MujocoEnv, utils.EzPickle):
     # description of the environment.
     r"""Tetrahedron Truss Robot Environment.
     ### Description ###
-    This environment consist of a 1-tetrahedron truss robot where the each edge (**member**) is a linear actuator and the vertices (**nodes**) are the passive ball joints. The robot is controlled by changing the length of the linear actuators either dynamically or by changing the position of the center of mass of the robot. The goal of the robot is to reach the target position. 
+    This environment consist of a tetrahedron truss robot where the each edge (**member**) of the tetrahedron is a linear actuator and the vertices (**nodes**) are the passive joints. The robot is controlled by changing the length of the linear actuators either dynamically or by changing the position of the center of mass of the robot. The goal of the robot is to reach the target position. 
 
     ### Notes ###
     Problem parameters:
@@ -35,79 +35,44 @@ class Env2TET(MujocoEnv, utils.EzPickle):
     - $(x_{target}, y_{target}, z_{target})$ : coordinates of the target position
 
     ### Action Space ###
-    The action space is a ```Box(-1,1,(15,), float32)```. An action is a vector of 6 elements where each element is the length of the member. The length of the member is between 0 and 2 meters.
+    The action space is a ```Box(0,2,(6,), float32)```. An action is a vector of 6 elements where each element is the length of the member. The length of the member is between 0 and 2 meters.
 
-    |Num |  Action  | Min | Max |      Name     | Joint |    Unit    |
-    |----|----------|-----|-----|---------------|-------|------------|
-    | 01 | velocity | -1  |  1  | [Member_0-1]  | slide | lenght (m) |
-    | 02 | velocity | -1  |  1  | [Member_0-2]  | slide | lenght (m) |
-    | 03 | velocity | -1  |  1  | [Member_0-3]  | slide | lenght (m) |
-    | 04 | velocity | -1  |  1  | [Member_0-4]  | slide | lenght (m) |
-    | 05 | velocity | -1  |  1  | [Member_0-5]  | slide | lenght (m) |
-    | 06 | velocity | -1  |  1  | [Member_1-2]  | slide | lenght (m) |
-    | 07 | velocity | -1  |  1  | [Member_1-3]  | slide | lenght (m) |
-    | 08 | velocity | -1  |  1  | [Member_1-4]  | slide | lenght (m) |
-    | 09 | velocity | -1  |  1  | [Member_1-5]  | slide | lenght (m) |
-    | 10 | velocity | -1  |  1  | [Member_2-3]  | slide | lenght (m) |
-    | 11 | velocity | -1  |  1  | [Member_2-4]  | slide | lenght (m) |
-    | 12 | velocity | -1  |  1  | [Member_2-5]  | slide | lenght (m) |
-    | 13 | velocity | -1  |  1  | [Member_3-4]  | slide | lenght (m) |
-    | 14 | velocity | -1  |  1  | [Member_3-5]  | slide | lenght (m) |
-    | 15 | velocity | -1  |  1  | [Member_4-5]  | slide | lenght (m) |
+    |Num |  Action  | Min | Max |    Name     | Joint |    Unit    |
+    |----|----------|-----|-----|-------------|-------|------------|
+    |0   | position | 0   | 2   | [Member_1]  | slide | lenght (m) |
+    |1   | position | 0   | 2   | [Member_2]  | slide | lenght (m) |
+    |2   | position | 0   | 2   | [Member_3]  | slide | lenght (m) |
+    |3   | position | 0   | 2   | [Member_4]  | slide | lenght (m) |
+    |4   | position | 0   | 2   | [Member_5]  | slide | lenght (m) |
+    |5   | position | 0   | 2   | [Member_6]  | slide | lenght (m) |
 
-    
     __notes:__ might need to change the position control to force control, thus we can have force as an input and lenght as an observation.
 
     ### Observation Space ###
     Observations capture the positional values of the center of mass and the respective time derivative aka velocity of the center of mass. Additionally, the positional values of the nodes are also captured.
-    The observation space is a ```Box(-inf, inf, (39,), float64)```. We might need to alter the observation space to have a better learning performance.
+    The observation space is a ```Box(-inf, inf, (18,), float64)```. We might need to alter the observation space to have a better learning performance.
 
 
     |:-----:|:----------------:|:-----:|:-----:|:---------:|:-------:|:---------:|
     |**Num**| **Observation**  |**Min**|**Max**|  **Name** |**Joint**| **Unit**  |
-    |  01   |  x-coord of CoM  |  -inf |  inf  |  coord_x  |  free   |   (m)     |
-    |  02   |  y-coord of CoM  |  -inf |  inf  |  coord_y  |  free   |   (m)     |
-    |  03   |  z-coord of CoM  |  -inf |  inf  |  coord_z  |  free   |   (m)     |
-    |  04   |  x-vel of CoM    |  -inf |  inf  |  vel_x    |  free   |   (m/s)   |
-    |  05   |  y-vel of CoM    |  -inf |  inf  |  vel_y    |  free   |   (m/s)   |
-    |  06   |  z-vel of CoM    |  -inf |  inf  |  vel_z    |  free   |   (m/s)   |
-    |  07   |  length of [0-1] |  -inf |  inf  |  length_1 |  slide  |   (m)     |
-    |  08   |  length of [0-2] |  -inf |  inf  |  length_2 |  slide  |   (m)     |
-    |  09   |  length of [0-3] |  -inf |  inf  |  length_3 |  slide  |   (m)     |
-    |  10   |  length of [0-4] |  -inf |  inf  |  length_4 |  slide  |   (m)     |
-    |  11   |  length of [0-5] |  -inf |  inf  |  length_5 |  slide  |   (m)     |
-    |  12   |  length of [1-2] |  -inf |  inf  |  length_6 |  slide  |   (m)     |
-    |  13   |  length of [1-3] |  -inf |  inf  |  length_7 |  slide  |   (m)     |
-    |  14   |  length of [1-4] |  -inf |  inf  |  length_8 |  slide  |   (m)     |
-    |  15   |  length of [1-5] |  -inf |  inf  |  length_9 |  slide  |   (m)     |
-    |  16   |  length of [2-3] |  -inf |  inf  |  length_10|  slide  |   (m)     |
-    |  17   |  length of [2-4] |  -inf |  inf  |  length_11|  slide  |   (m)     |
-    |  18   |  length of [2-5] |  -inf |  inf  |  length_12|  slide  |   (m)     |
-    |  19   |  length of [3-4] |  -inf |  inf  |  length_13|  slide  |   (m)     |
-    |  20   |  length of [3-5] |  -inf |  inf  |  length_14|  slide  |   (m)     |
-    |  21   |  length of [4-5] |  -inf |  inf  |  length_15|  slide  |   (m)     |
-    |  22   |  x-coord of [0]  |  -inf |  inf  |  node_1_x |  free   |   (m)     |
-    |  23   |  y-coord of [0]  |  -inf |  inf  |  node_1_y |  free   |   (m)     |
-    |  24   |  z-coord of [0]  |  -inf |  inf  |  node_1_z |  free   |   (m)     |
-    |  25   |  x-coord of [1]  |  -inf |  inf  |  node_2_x |  free   |   (m)     |
-    |  26   |  y-coord of [1]  |  -inf |  inf  |  node_2_y |  free   |   (m)     |
-    |  27   |  z-coord of [1]  |  -inf |  inf  |  node_2_z |  free   |   (m)     |
-    |  28   |  x-coord of [2]  |  -inf |  inf  |  node_3_x |  free   |   (m)     |
-    |  29   |  y-coord of [2]  |  -inf |  inf  |  node_3_y |  free   |   (m)     |
-    |  30   |  z-coord of [2]  |  -inf |  inf  |  node_3_z |  free   |   (m)     |
-    |  31   |  x-coord of [3]  |  -inf |  inf  |  node_4_x |  free   |   (m)     |
-    |  32   |  y-coord of [3]  |  -inf |  inf  |  node_4_y |  free   |   (m)     |
-    |  33   |  z-coord of [3]  |  -inf |  inf  |  node_4_z |  free   |   (m)     |
-    |  34   |  x-coord of [4]  |  -inf |  inf  |  node_5_x |  free   |   (m)     |
-    |  35   |  y-coord of [4]  |  -inf |  inf  |  node_5_y |  free   |   (m)     |
-    |  36   |  z-coord of [4]  |  -inf |  inf  |  node_5_z |  free   |   (m)     |
-    |  37   |  x-coord of [5]  |  -inf |  inf  |  node_6_x |  free   |   (m)     |
-    |  38   |  y-coord of [5]  |  -inf |  inf  |  node_6_y |  free   |   (m)     |
-    |  39   |  z-coord of [5]  |  -inf |  inf  |  node_6_z |  free   |   (m)     |
-
-
-
-    __notes:__ might need to change the observation space to have a better learning performance.
+    |   0   |  x-coord of CoM  |  -inf |  inf  |  coord_x  |  free   |   (m)     |
+    |   1   |  y-coord of CoM  |  -inf |  inf  |  coord_y  |  free   |   (m)     |
+    |   2   |  z-coord of CoM  |  -inf |  inf  |  coord_z  |  free   |   (m)     |
+    |   3   |  x-orien of CoM  |  -inf |  inf  |  orient_x |  free   |   (rad)   |
+    |   4   |  y-orien of CoM  |  -inf |  inf  |  orient_y |  free   |   (rad)   |
+    |   5   |  z-orien of CoM  |  -inf |  inf  |  orient_z |  free   |   (rad)   |
+    |   6   |  x-vel of CoM    |  -inf |  inf  |  vel_x    |  free   |   (m/s)   |
+    |   7   |  y-vel of CoM    |  -inf |  inf  |  vel_y    |  free   |   (m/s)   |
+    |   8   |  z-vel of CoM    |  -inf |  inf  |  vel_z    |  free   |   (m/s)   |
+    |   9   |  x-ang.vel CoM   |  -inf |  inf  |  omega_x  |  free   |   (rad/s) |
+    |  10   |  y-ang.vel CoM   |  -inf |  inf  |  omega_y  |  free   |   (rad/s) |
+    |  11   |  z-ang.vel CoM   |  -inf |  inf  |  omega_z  |  free   |   (rad/s) |
+    |  12   |  length of [M_1] |  -inf |  inf  |  length_1 |  slide  |   (m)     |
+    |  13   |  length of [M_2] |  -inf |  inf  |  length_2 |  slide  |   (m)     |
+    |  14   |  length of [M_3] |  -inf |  inf  |  length_3 |  slide  |   (m)     |
+    |  15   |  length of [M_4] |  -inf |  inf  |  length_4 |  slide  |   (m)     |
+    |  16   |  length of [M_5] |  -inf |  inf  |  length_5 |  slide  |   (m)     |
+    |  17   |  length of [M_6] |  -inf |  inf  |  length_6 |  slide  |   (m)     |
 
     - add node positions
     - add ground nodes
@@ -150,7 +115,7 @@ class Env2TET(MujocoEnv, utils.EzPickle):
     # initial configuration of the environment with the default parameters.
     def __init__(
         self,
-        xml_file: str = os.path.abspath("assets/scene-2-tet.xml"),
+        xml_file: str = os.path.abspath("assets/scene.xml"),
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 10,
@@ -161,7 +126,7 @@ class Env2TET(MujocoEnv, utils.EzPickle):
         terminate_when_unhealthy: bool = True,
         healthy_z_range: Tuple[float, float] = (0.0, 5.0), # only in planar surface
         reset_noise_scale: float = 0.1,
-        episode_horizon: int = 500,
+        episode_horizon: int = 100,
         step_number: int = 0,
         **kwargs,
     ):
@@ -214,7 +179,7 @@ class Env2TET(MujocoEnv, utils.EzPickle):
 
         # OBSERVATION SPACE
 
-        obs_size = 3+3+15+18; # 3 for CoM position, 3 for CoM linear velocity, 15 for member lengths, 18 for node positions
+        obs_size = 3+3+6+12; # 3 for CoM position, 3 for CoM linear velocity, 6 for member lengths, 12 for node positions
 
         self.observation_space = Box(
             low=-np.inf,
@@ -226,8 +191,8 @@ class Env2TET(MujocoEnv, utils.EzPickle):
         self.observation_structure = {
             "com": 3,
             "comvel": 3,
-            "member_lengths": 15,
-            "node_positions": 18,
+            "member_lengths": 6,
+            "node_positions": 12,
         }
 
     @property
@@ -315,18 +280,12 @@ class Env2TET(MujocoEnv, utils.EzPickle):
     def _get_obs(self):
         position = self.data.subtree_com[0] # we will have the first row
         velocity = self.data.subtree_com[0] # keep it same for now
-        member_lengths = self.data.actuator_length[:15]
+        member_lengths = self.data.actuator_length[:6]
+        node_positions = np.concatenate((np.array(self.data.geom("(1)").xpos[:3]),   # not sure if .xpos is correct
+                                         np.array(self.data.geom("(2)").xpos[:3]),
+                                         np.array(self.data.geom("(3)").xpos[:3]),
+                                         np.array(self.data.geom("(6)").xpos[:3])), axis=0)
 
-        # initiate node positions with zeros
-
-        node_positions = np.zeros((6, 3))
-
-        for i in range(6):
-            if np.isnan(self.data.geom("("+i+")").xpos[:1]).any():
-                node_positions[i] = self.data.geom("("+i+")").xpos[:3]
-            else:
-                node_positions[i] = np.zeros(3)
-        
         print("position",position)
         print("velocity",velocity)
         print("member_lengths",member_lengths)
@@ -344,12 +303,16 @@ class Env2TET(MujocoEnv, utils.EzPickle):
         #qpos = self.init_qpos + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nq)
         #qvel = self.init_qvel + self.np_random.uniform(low=-0.1, high=0.1, size=self.model.nv)
         
-
+        #self.fullpath = os.path.abspath("assets/cart.xml")
+        #self._ezpickle_args[0] = os.path.abspath("assets/cart.xml")
+        #print("xml",self._ezpickle_args)
+        print("vars",vars(self))
         qpos = self.init_qpos 
         qvel = self.init_qvel
         self.set_state(qpos, qvel)
-
+	
         observation = self._get_obs()
+        
         return observation
     
     def _get_reset_info(self):
