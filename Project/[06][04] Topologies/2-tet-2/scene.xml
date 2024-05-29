@@ -1,5 +1,5 @@
-<mujoco model="2-tet-E scene">
-  <include file="2-tet-E.xml"/>
+<mujoco model="2-tet-2 scene">
+  <include file="2-tet-2.xml"/>
 
   <statistic center="0 0 0.8" extent="2"/>
 
