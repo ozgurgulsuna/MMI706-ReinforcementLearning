@@ -6,14 +6,14 @@ import numpy as np
 import copy
 import math
 import networkx as nx
-from scipy.optimize import least_squares
+from scipy.optimize import least_squares, minimize
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from hierarcy_pos import hierarchy_pos
 
 # Select topology
 # minimum is a triangle
-model_name = "octahedron"  # "tetrahedron"
+model_name = "3-tet"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [1,2]]) # triangle
 # connectivity = np.array([[0, 1], [1, 2], [2, 3], [3,4]]) # 4-line
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]) # 1-tet
@@ -21,10 +21,10 @@ model_name = "octahedron"  # "tetrahedron"
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 5], [1, 2], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5]]) # 2-tet-1
 # connectivity = np.array([[0, 1], [0, 2], [0, 5], [1, 2], [1, 3], [1, 4], [2, 3], [2, 5], [3, 4], [4, 5]]) # cupola
-connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4],[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 3.5-tetrahedron
+# connectivity = np.array([[0, 1], [0, 2], [0, 3], [0, 4],[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]) # 2-tet-E
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [4, 5]]) # 3-tet
 # connectivity = np.array([[0, 1], [0, 2], [0, 3], [0,5], [1,2], [1, 3], [1, 4], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5]]) # 3-tet
-# connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
+connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5], [1,2], [1, 3], [1, 5], [2, 3], [2, 4], [3, 4], [3, 5], [4, 5]]) # octahedron
 # connectivity = np.array([[0, 1], [0, 2], [0, 4], [0,5],[0,6], [1,2], [1, 3], [1, 5], [2, 3], [2, 4],[2,6], [3, 4], [3, 5], [4, 5],[4,6],[5,6], ]) # 4-octahedron
 
 
@@ -163,7 +163,7 @@ def equations(coords):
     D = np.dot(C, P)
 
     residuals = [
-        ((np.linalg.norm(D[i]) - L[i])+0.1/(np.sum(np.abs(coords)*np.abs(coords)))) for i in range(M)
+        ((np.linalg.norm(D[i]) - L[i])+0.1/(np.sum(np.abs(coords)))) for i in range(M)
     ]
     
     # Adding the penalty as additional residuals
@@ -179,7 +179,7 @@ B_upper = [np.inf, np.inf, 1e-9]
 C_lower = [-np.inf, -np.inf, 0.0]
 C_upper = [np.inf, np.inf, 1e-9]
 
-lower_bounds = A_lower + B_lower + C_lower + [-np.inf, -np.inf, 0]* (N - 3)
+lower_bounds = A_lower + B_lower + C_lower + [-np.inf, -np.inf, 0.0]* (N - 3)
 upper_bounds = A_upper + B_upper + C_upper + [np.inf, np.inf, np.inf]* (N - 3)
 # print(lower_bounds)
 # print(upper_bounds)
@@ -252,10 +252,12 @@ plt.show()
 member_template = """
     <body name="[%s-0]" pos="%f %f %f" >
     %s
+    %s
     <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.025 0.45" material="metal" contype="1"/>
     <body name="[%s-1]" pos="%f %f %f" >
         <geom type="cylinder" pos="%f %f %f" axisangle="%f %f %f %f" size="0.02 0.5" material="gray" contype="1"/>
         <joint name="Linear-%s" type="slide" axis="%f %f %f" range="%f %f"/>
+        %s
         %s
     </body>
     </body>
@@ -374,6 +376,10 @@ members = {}
 
 # print("members",members)
 
+# this will store the nodes that are placed in the xml file
+nodes = {}
+
+
 i = 0
 
 for edge in tree.edges:
@@ -410,6 +416,20 @@ for edge in tree.edges:
     Passives = [0 ,0, 0 ]
 
     passive_template = """<joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>"""
+
+    # node_template = """<geom type="sphere" name="(%s)" pos="%f %f %f" size="0.05" material="red"contype="1" mass="10"/>"""
+
+    # if a not in nodes:
+    #     nodes[a] = a
+    #     node_1_add = node_template % (a, 0, 0, 0)
+    # else:
+    #     node_1_add = ""
+    # if b not in nodes:
+    #     nodes[b] = b
+    #     node_2_add = node_template % (b, 0, 0, 0)
+    
+
+
    
     if edge[1] == "0-1":
         passives = ""
@@ -418,16 +438,16 @@ for edge in tree.edges:
 
 
 
-    members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2],passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2],0,0 ,  "%s")
+    # members[i] = member_template % (edge[1], P[a][0], P[a][1], P[a][2], "%s",passives, nodes[a], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, edge[1], L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, edge[1], L_dir[0], L_dir[1], L_dir[2],0,0 ,"%s",  "%s")
 # print(members)
-print(members[1])
-print(members[2])
-print(members[3])
+# print(members[1])
+# print(members[2])
+# print(members[3])
 
 
-hmm = members[1] % (members[2]%(""))
+# hmm = members[1] % (members[2]%(""))
 
-hmm = hmm +members[3] % ""
+# hmm = hmm +members[3] % ""
 
 # print(hmm)
 # print(type(members[1]))
@@ -480,6 +500,7 @@ def generate_member(node):
     P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset2 = (P[a] - P[b])/(np.linalg.norm(P[a] - P[b]))*(1-np.linalg.norm(P[a] - P[b]))
+    N_offset = -(P[a] - P[b])/(np.linalg.norm(P[a] - P[b]))*(np.linalg.norm(P[a] - P[b])-0.5)
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
@@ -499,6 +520,21 @@ def generate_member(node):
 
 
     passive_template = """<joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>"""
+
+    node_template = """<geom type="sphere" name="(%s)" pos="%f %f %f" size="0.05" material="red"contype="1" mass="10"/>"""
+
+    if a not in nodes:
+        nodes[a] = a
+        node_1_add = node_template % (a, 0, 0, 0)
+    else:
+        node_1_add = ""
+    if b not in nodes:
+        nodes[b] = b
+        node_2_add = node_template % (b, N_offset[0], N_offset[1], N_offset[2])
+    else:
+        node_2_add = ""
+    
+
    
     if node == "0-1":
         passives = ""
@@ -535,7 +571,7 @@ def generate_member(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2],range_start, range_end ,  "%s")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], node_1_add, passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2],range_start, range_end ,node_2_add,   "%s")
 
 def generate_member2(node):
     correct = [0,0,0]
@@ -564,6 +600,7 @@ def generate_member2(node):
     P_offset = -(P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset = (P[b] - P[a])/(np.linalg.norm(P[b] - P[a]))*0.50
     L_offset2 = (P[a] - P[b])/(np.linalg.norm(P[a] - P[b]))*(1-np.linalg.norm(P[a] - P[b]))
+    N_offset = -(P[a] - P[b])/(np.linalg.norm(P[a] - P[b]))*(np.linalg.norm(P[a] - P[b])-0.5)
     Passives = (P[a] - P[b])/(np.linalg.norm(P[b] - P[a]))
     Passives = [0 ,0, 0 ]
 
@@ -588,6 +625,19 @@ def generate_member2(node):
 
 
     passive_template = """<joint name="Passive%s" type="ball" pos="%f %f %f" axis="0 1 0" damping=".9"/>"""
+
+    node_template = """<geom type="sphere" name="(%s)" pos="%f %f %f" size="0.05" material="red"contype="1" mass="10"/>"""
+
+    if a not in nodes:
+        nodes[a] = a
+        node_1_add = node_template % (a, 0, 0, 0)
+    else:
+        node_1_add = ""
+    if b not in nodes:
+        nodes[b] = b
+        node_2_add = node_template % (b, N_offset[0], N_offset[1], N_offset[2])
+    else:
+        node_2_add = ""
    
     if node == "0-1":
         passives = ""
@@ -622,7 +672,7 @@ def generate_member2(node):
 #     print("member_template")
 #     print(member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2],node, Passives[0], Passives[1], Passives[2], P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], 0, 0, 0, axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2], "")
 # )
-    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2],range_start, range_end ,  "")
+    return member_template % (node, P[a][0]-correct[0], P[a][1]-correct[1], P[a][2]-correct[2], node_1_add, passives, P_offset[0], P_offset[1], P_offset[2], axis[0], axis[1], axis[2], angle, node, L_offset[0], L_offset[1], L_offset[2], L_offset2[0], L_offset2[1], L_offset2[2], axis[0], axis[1], axis[2], angle, node, L_dir[0], L_dir[1], L_dir[2],range_start, range_end ,node_2_add,   "")
    
 
 # Traverse the tree and combine members
