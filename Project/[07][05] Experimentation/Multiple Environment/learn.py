@@ -2,10 +2,11 @@ import random
 from stable_baselines3 import PPO  # Import the PPO class
 from env1tet import Env1TET
 from env2tet import Env2TET  # Adjust the import according to your environment module
+from env3tet import Env3TET
 
 # Create the environments
-env1 = Env1TET(render_mode="rgb_array")
-env2 = Env2TET(render_mode="rgb_array")
+env1 = Env3TET(render_mode="rgb_array")
+env2 = Env3TET(render_mode="rgb_array")
 
 # List of environments
 env_list = [env1, env2]
@@ -14,8 +15,8 @@ env_list = [env1, env2]
 model = PPO("MlpPolicy", env_list[0], verbose=1, tensorboard_log="./ppo_truss_locomotion_tensorboard_2")
 
 # Set the number of episodes and timesteps per episode
-n_episodes = 50
-timesteps_per_episode = 4000
+n_episodes = 1000
+timesteps_per_episode = 5000
 
 # Train the model
 for episode in range(n_episodes):
@@ -28,7 +29,7 @@ for episode in range(n_episodes):
     
     # Learn for a specific number of timesteps
     model.learn(total_timesteps=timesteps_per_episode, reset_num_timesteps=False)
-    model.save("ppo_truss_locomotion_2")
+    model.save("ppo_truss_locomotion_3")
   
 
 

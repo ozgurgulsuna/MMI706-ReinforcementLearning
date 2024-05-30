@@ -20,7 +20,6 @@
     <light pos="1 -1 1.5" dir="-1 1 -1" diffuse="0.1 0.1 0.1" directional="true" castshadow="false"/>
     <!--<geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>-->
     <light name="light" pos="0 0 20" dir="0 0 -1" castshadow="true"/>-->
-    <geom type="plane" size="20 20 .01" material="groundplane"/>
+    <geom pos="0 0 -0.1"type="plane" size="20 20 .01" material="groundplane"/>
   </worldbody>
-</mujoco>
 </mujoco>
