@@ -1,4 +1,6 @@
 ###### Model-Free Control ######
+
+## Model-Free Control ##
 In model-free control, we do not have a model of the environment. The model can be unknown, incomplete, or computationally expensive. We directly learn the policy or the action-value function.
 
 Prediction is the process of estimating the value function, while control is the process of finding the optimal policy. The objective function for control is the 
