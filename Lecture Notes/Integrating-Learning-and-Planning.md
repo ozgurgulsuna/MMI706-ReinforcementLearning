@@ -73,6 +73,16 @@ The table is updated, replacing the old state estimation with the one that resul
 
 Another problem is that the sample count is important. If the sample count is low, the model would introduce bias.
 
+#### Planning with inaccurate model ####
+Given an imperfect model 〈Pη, Rη〉 6 = 〈P, R〉
+Performance of model-based RL is limited to optimal policy.
+For approximate MDP 〈S, A, Pη, Rη〉
+i.e. Model-based RL is only as good as the estimated model.
+When the model is inaccurate, planning process will compute.
+a suboptimal policy
+- Solution 1: when model is wrong, use model-free RL
+- Solution 2: reason explicitly about model uncertainty
+
 ------
 
 ## Integrated Architectures ##
@@ -104,6 +114,21 @@ graph TD
 
 ### Forward Search ###
 We have the model of the environment, and we can simulate the environment. However, it is not practical to simulate the environment for all possible actions. Look-ahead search is used to find the best action starting from the current state $s_t$. It is just as solving an MDP.
+
+**Monte-Carlo Tree Seach**: Given a model $\mathcal{M}$, simulate K episodes starting from the current state $s_{t}$ and current simulation policy $\pi$. The tree is expanded by selecting the best action at each state. Build a search tree containing the visited states and actions. _Evaluate_ the value of the states and actions. After the search is finished, select the current action with the highest value.
+
+Each simulation consists of two phases:
+- **Tree Policy**: Select the best action at each state.
+- **Default Policy**: Select a random action at each state.
+
+Repeat the simulation K times, and update the value of the states and actions.
+- **Evaluation**: Update the value of the states and actions.
+- **Improvement**: improve the tree policy.
+
+![Monte-Carlo Tree Search](figures/MCTS.png)
+
+
+**Temporal-Difference Tree Search**: The idea is to apply TD learning to the simulated experience. The value of the states and actions are updated using TD learning. Which is different than the MC tree search, where here the aim is to use a function approximator to estimate the value of the states and actions.
 
 **Advantages of MC Tree Search**
 - Highly selective towards the best actions.
